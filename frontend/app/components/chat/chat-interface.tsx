@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import ChatMessages from './chat-messages'
 import ChatInput from './chat-input'
 import { useChatStore } from '@/store/chat-store'

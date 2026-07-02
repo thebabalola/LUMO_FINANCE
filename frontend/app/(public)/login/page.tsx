@@ -19,7 +19,7 @@ export default function LoginPage() {
   
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>()
 
-  const onSubmit = async (data: LoginFormInputs) => {
+  const onSubmit = async () => {
     setIsLoading(true)
     // Simulate API call
     setTimeout(() => {

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { ArrowRight, ShieldCheck, Zap, Globe, MessageSquare, ChevronRight } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Zap, Globe, MessageSquare } from 'lucide-react'
 
 export default function LandingPage() {
   return (

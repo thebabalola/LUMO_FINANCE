@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       },
     ]
 
-    return NextResponse.json(transactions.slice(0, parseInt(limit)))
+    return NextResponse.json(transactions.slice(parseInt(skip), parseInt(skip) + parseInt(limit)))
   } catch (error) {
     console.error('Transactions API error:', error)
     return NextResponse.json(

@@ -1,8 +1,30 @@
+# Dependencies
+node_modules/
 worker/node_modules/
-worker/.dev.vars
+
+# Build and Artifacts
+.next/
+build/
+dist/
+releases/
+artifacts/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.dev.vars
+**/settings/Mainnet.toml
+**/settings/Testnet.toml
+
+# System / OS
 .DS_Store
 *.xcuserstate
-build/
-releases/
+
+# Workspace / IDE
 .claude/
 coding-plans/
+.vscode/
+.idea/

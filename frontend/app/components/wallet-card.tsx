@@ -1,34 +1,41 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Eye, EyeOff, Send, Smartphone, Wifi, ReceiptText } from 'lucide-react'
-import anime from 'animejs'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+
 
 export function WalletCard() {
   const [showBalance, setShowBalance] = useState(true)
-  const balanceRef = useRef<HTMLHeadingElement>(null)
+  const [displayBalance, setDisplayBalance] = useState(0)
   
   const targetBalance = 125430
   
   useEffect(() => {
-    if (showBalance && balanceRef.current) {
-      anime({
-        targets: balanceRef.current,
-        innerHTML: [0, targetBalance],
-        round: 1,
-        duration: 1200,
-        easing: 'easeOutExpo',
-        update: (anim) => {
-          if (balanceRef.current) {
-            balanceRef.current.innerHTML =
-              '₦' + Math.floor(Number(anim.animations[0].currentValue)).toLocaleString()
-          }
-        },
-      })
+    if (showBalance) {
+      let current = 0
+      const duration = 1200
+      const steps = 60
+      const stepValue = targetBalance / steps
+      const intervalTime = duration / steps
+      
+      const timer = setInterval(() => {
+        current += stepValue
+        if (current >= targetBalance) {
+          setDisplayBalance(targetBalance)
+          clearInterval(timer)
+        } else {
+          setDisplayBalance(Math.floor(current))
+        }
+      }, intervalTime)
+      
+      return () => clearInterval(timer)
+    } else {
+      setDisplayBalance(0)
+      return undefined
     }
   }, [showBalance])
+
 
   return (
     <Card className="p-6 mb-6">
@@ -36,8 +43,8 @@ export function WalletCard() {
         <div>
           <p className="text-sm text-cream/70 mb-1">Total Balance</p>
           {showBalance ? (
-            <h2 ref={balanceRef} className="text-3xl font-heading font-bold text-cream">
-              ₦0
+            <h2 className="text-3xl font-heading font-bold text-cream">
+              ₦{displayBalance.toLocaleString()}
             </h2>
           ) : (
             <h2 className="text-3xl font-heading font-bold text-cream">
