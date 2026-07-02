@@ -1,6 +1,13 @@
-name = "clicky-proxy"
+name = "lumo-finance-proxy"
 main = "src/index.ts"
 compatibility_date = "2024-01-01"
 
 [vars]
 ELEVENLABS_VOICE_ID = "kPzsL2i3teMYv0FxEYQ6"
+NOMBA_BASE_URL = "https://api.nomba.com/v1"
+
+# Secrets (set via: npx wrangler secret put SECRET_NAME)
+# - ANTHROPIC_API_KEY: Your Anthropic API key for Claude
+# - ELEVENLABS_API_KEY: Your ElevenLabs API key
+# - ASSEMBLYAI_API_KEY: Your AssemblyAI API key (optional, for voice)
+# - NOMBA_API_KEY: Your Nomba API key for financial operations

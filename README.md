@@ -1,45 +1,208 @@
-# Lumo Finance
+# Lumo Finance - AI Financial Operating System
 
-**AI-powered financial operating system for Africa**
+Lumo Finance is an AI-powered financial assistant that enables users to manage their finances through natural conversation. Send money, check balances, buy airtime, pay bills, and analyze spending—all via chat.
 
-Lumo Finance is a conversational financial assistant that lets users manage their money through natural language instead of traditional banking apps. Send money, buy airtime, pay bills, and get spending insights—just by talking to Lumo.
+## 🚀 Features
 
-## Quick Links
+- 💬 **Natural Language Chat** - "Send ₦10,000 to David" or "Check my balance"
+- 📊 **Dashboard** - View wallet, transactions, and spending analytics
+- 💰 **Money Transfers** - Send funds to bank accounts
+- 📱 **Airtime & Data** - Purchase mobile services
+- 💡 **Bill Payments** - Pay utilities and subscriptions
+- 🔍 **Spending Insights** - Understand your financial patterns
+- 🔐 **Secure** - Every transaction requires explicit confirmation
 
-- 📋 [Product Requirements Document](LUMO_PRD.md) — Complete PRD with features, architecture, and success metrics
-- 🏗️ [Architecture & Setup](AGENTS.md) — Technical documentation for developers
+## 🛠 Tech Stack
 
-## Vision
-
-Lumo Finance is not another banking app—it's a **Financial Operating System** that sits above all financial services in Africa. Users interact through natural conversation while Lumo intelligently orchestrates payments, transfers, and financial insights in the background.
-
-## Core Features (MVP)
-
-- 💬 **AI Financial Assistant** — Conversational money management
-- 📱 **Money Transfers** — Send money to bank accounts
-- 📲 **Airtime & Data** — Purchase mobile services
-- 💡 **Bill Payments** — Pay utilities and subscriptions
-- 💰 **Spending Insights** — Understand your finances
-- 🔐 **Secure Transactions** — Every action requires explicit confirmation
-
-## Technology Stack
-
-- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, React 18, TypeScript, Tailwind CSS, Zustand
 - **Backend**: Go, Fiber, PostgreSQL, Redis
-- **AI**: Claude (via Anthropic API)
+- **AI**: Claude (Anthropic API)
+- **API Proxy**: Cloudflare Worker
 - **Payments**: Nomba APIs
-- **Infrastructure**: Docker, Vercel, Cloudflare
+- **Deployment**: Docker, Vercel (frontend), Any Go host (backend)
 
-## Getting Started
+## 📁 Project Structure
 
-See [LUMO_PRD.md](LUMO_PRD.md) for the complete product specification and feature roadmap.
+```
+lumo-finance/
+├── frontend/                # Next.js web app
+│   ├── app/
+│   │   ├── api/            # API routes
+│   │   ├── components/
+│   │   ├── dashboard/
+│   │   ├── store/          # Zustand state
+│   │   ├── types/
+│   │   └── lib/
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── next.config.js
+│   ├── tailwind.config.js
+│   └── Dockerfile
+│
+├── backend/                 # Go/Fiber REST API
+│   ├── main.go
+│   ├── go.mod
+│   ├── internal/
+│   │   ├── db/             # Database
+│   │   ├── redis/          # Cache
+│   │   ├── handlers/       # HTTP handlers
+│   │   ├── middleware/
+│   │   ├── models/         # Data structures
+│   │   └── services/
+│   ├── migrations/         # SQL migrations
+│   ├── Makefile
+│   ├── Dockerfile
+│   └── README.md
+│
+├── worker/                  # Cloudflare Worker proxy
+│   ├── src/index.ts        # Claude, ElevenLabs, Nomba
+│   ├── wrangler.toml
+│   └── package.json
+│
+├── docker-compose.yml       # Local development
+├── LUMO_PRD.md             # Product specification
+└── AGENTS.md               # Architecture guide
+```
 
-For technical setup and architecture details, see [AGENTS.md](AGENTS.md).
+## ⚙️ Quick Start
 
-## Development
+### Option 1: Docker Compose (Recommended for local dev)
 
-This project is being built for the Nomba x DevCarrer Hackathon.
+```bash
+docker-compose up
+```
+
+This starts:
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:8000
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+
+### Option 2: Manual Setup
+
+#### Frontend
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000)
+
+#### Backend
+
+```bash
+cd backend
+cp .env.example .env
+
+# Setup database
+createdb lumo_finance
+psql -U postgres -d lumo_finance -f migrations/001_create_users_table.sql
+
+# Start server
+make dev
+```
+
+Server runs on `http://localhost:8000`
+
+#### Cloudflare Worker
+
+```bash
+cd worker
+npm install
+
+npx wrangler secret put ANTHROPIC_API_KEY
+npx wrangler secret put ELEVENLABS_API_KEY
+npx wrangler secret put NOMBA_API_KEY
+
+npx wrangler deploy
+```
+
+## 📂 Documentation
+
+- **[Frontend Setup](frontend/README.md)** - Next.js app documentation
+- **[Backend Setup](backend/README.md)** - Go/Fiber API documentation
+- **[Product Spec](LUMO_PRD.md)** - Complete feature specification
+- **[Architecture](AGENTS.md)** - Technical architecture details
+
+## 🏗️ Architecture
+
+```
+User Browser
+    ↓
+Next.js Frontend (port 3000)
+    ↓
+Go/Fiber Backend (port 8000)
+    ├→ PostgreSQL (user data, transactions)
+    ├→ Redis (caching, sessions)
+    └→ Nomba APIs (financial transactions)
+    
+Claude AI (via Cloudflare Worker)
+```
+
+## 🚀 Deployment
+
+### Frontend (Vercel)
+```bash
+cd frontend
+vercel deploy
+```
+
+### Backend (Docker / Render / Railway)
+```bash
+cd backend
+docker build -t lumo-api .
+# Push to registry and deploy
+```
+
+## 📝 Development
+
+### Frontend Commands
+```bash
+cd frontend
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run lint         # Run linter
+npm start           # Start production build
+```
+
+### Backend Commands
+```bash
+cd backend
+make dev             # Start dev server
+make build           # Build binary
+make test            # Run tests
+make docker-build    # Build Docker image
+```
+
+## 🔐 Security
+
+- All API keys in `.env` files (Cloudflare Worker secrets)
+- No sensitive data in client code
+- JWT authentication for backend
+- Every transaction requires user confirmation
+- HTTPS for all external calls
+
+## 🤝 Contributing
+
+1. Clone the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+MIT - See [LICENSE](LICENSE) file
+
+## 🤝 Support
+
+- **Issues**: GitHub Issues
+- **Discussions**: GitHub Discussions
+- **Email**: support@lumo.finance
 
 ---
 
-**Project Repository**: https://github.com/Vatilize-Labs/LUMO_FINANCE-
+Built for the Nomba x DevCarrer Hackathon

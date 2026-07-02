@@ -1,12 +1,14 @@
 /**
- * Clicky Proxy Worker
+ * Lumo Finance Proxy Worker
  *
- * Proxies requests to Claude and ElevenLabs APIs so the app never
+ * Proxies requests to Claude, ElevenLabs, and Nomba APIs so the app never
  * ships with raw API keys. Keys are stored as Cloudflare secrets.
  *
  * Routes:
- *   POST /chat  → Anthropic Messages API (streaming)
- *   POST /tts   → ElevenLabs TTS API
+ *   POST /chat           → Anthropic Messages API (Claude)
+ *   POST /tts            → ElevenLabs TTS API
+ *   POST /nomba/*        → Nomba APIs (transfers, airtime, bills, etc)
+ *   GET  /transcribe-token → AssemblyAI token endpoint
  */
 
 interface Env {
@@ -14,6 +16,8 @@ interface Env {
   ELEVENLABS_API_KEY: string;
   ELEVENLABS_VOICE_ID: string;
   ASSEMBLYAI_API_KEY: string;
+  NOMBA_API_KEY: string;
+  NOMBA_BASE_URL: string;
 }
 
 export default {
@@ -35,6 +39,10 @@ export default {
 
       if (url.pathname === "/transcribe-token") {
         return await handleTranscribeToken(env);
+      }
+
+      if (url.pathname.startsWith("/nomba/")) {
+        return await handleNomba(request, env);
       }
     } catch (error) {
       console.error(`[${url.pathname}] Unhandled error:`, error);
@@ -137,5 +145,36 @@ async function handleTTS(request: Request, env: Env): Promise<Response> {
     headers: {
       "content-type": response.headers.get("content-type") || "audio/mpeg",
     },
+  });
+}
+
+async function handleNomba(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  const path = url.pathname.replace("/nomba/", "");
+
+  const body = request.body ? await request.text() : undefined;
+
+  const response = await fetch(`${env.NOMBA_BASE_URL}/${path}`, {
+    method: request.method,
+    headers: {
+      Authorization: `Bearer ${env.NOMBA_API_KEY}`,
+      "content-type": "application/json",
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error(`[/nomba/${path}] Nomba API error ${response.status}: ${errorBody}`);
+    return new Response(errorBody, {
+      status: response.status,
+      headers: { "content-type": "application/json" },
+    });
+  }
+
+  const data = await response.text();
+  return new Response(data, {
+    status: 200,
+    headers: { "content-type": "application/json" },
   });
 }
