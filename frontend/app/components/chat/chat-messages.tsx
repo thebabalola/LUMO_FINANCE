@@ -34,10 +34,7 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
     
     // On success, replace intent with receipt
     updateMessage(messageId, {
-      intent: undefined, // remove intent to swap to receipt card
       receipt: { reference: `NMB-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000)}` },
-      // preserve the intent data in a separate field if needed, but we can also just keep it
-      // actually, TransactionReceiptCard needs the intent data. Let's keep intent on the message but add receipt!
       intent: intent
     })
   }

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ArrowRight, Loader2, ShieldCheck, Mail, Lock, User } from 'lucide-react'
+import { Loader2, ShieldCheck, Mail, Lock, User } from 'lucide-react'
 
 export default function RegisterPage() {
   const [step, setStep] = useState<1 | 2>(1)
@@ -18,7 +18,7 @@ export default function RegisterPage() {
     defaultValues: { name: '', email: '', password: '', confirmPassword: '', otp: '' }
   })
 
-  const onSubmitStep1 = async (data: any) => {
+  const onSubmitStep1 = async (_data: any) => {
     setIsLoading(true)
     // Simulate API call to register
     await new Promise(resolve => setTimeout(resolve, 1000))
@@ -26,7 +26,7 @@ export default function RegisterPage() {
     setStep(2)
   }
 
-  const onSubmitStep2 = async (data: any) => {
+  const onSubmitStep2 = async (_data: any) => {
     setIsLoading(true)
     // Simulate API call to verify OTP
     await new Promise(resolve => setTimeout(resolve, 1500))

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Eye, EyeOff, Send, Smartphone, Wifi, ReceiptText, Loader2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { useChatStore } from '@/store/chat-store'
 
 export function WalletCard() {
   const [showBalance, setShowBalance] = useState(true)
@@ -10,6 +11,8 @@ export function WalletCard() {
   const [targetBalance, setTargetBalance] = useState(0)
   const [accountNumber, setAccountNumber] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  
+  const { setInputValue } = useChatStore()
   
   useEffect(() => {
     async function fetchWallet() {
@@ -90,19 +93,31 @@ export function WalletCard() {
       </div>
 
       <div className="grid grid-cols-4 gap-2">
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group">
+        <button 
+          onClick={() => setInputValue('Send ')}
+          className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group"
+        >
           <Send size={20} className="group-hover:scale-110 transition-transform" />
           <span className="text-xs font-medium">Send</span>
         </button>
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group">
+        <button 
+          onClick={() => setInputValue('Buy Airtime ')}
+          className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group"
+        >
           <Smartphone size={20} className="group-hover:scale-110 transition-transform" />
           <span className="text-xs font-medium">Airtime</span>
         </button>
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group">
+        <button 
+          onClick={() => setInputValue('Buy Data ')}
+          className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group"
+        >
           <Wifi size={20} className="group-hover:scale-110 transition-transform" />
           <span className="text-xs font-medium">Data</span>
         </button>
-        <button className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group">
+        <button 
+          onClick={() => setInputValue('Pay Bill ')}
+          className="flex flex-col items-center justify-center gap-2 p-3 bg-white/5 hover:bg-ember hover:text-white text-cream rounded-xl transition-colors group"
+        >
           <ReceiptText size={20} className="group-hover:scale-110 transition-transform" />
           <span className="text-xs font-medium">Bills</span>
         </button>
