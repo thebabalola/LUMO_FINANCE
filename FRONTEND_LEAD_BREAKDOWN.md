@@ -113,7 +113,7 @@ LUMO_FINANCE/
 
 ---
 
-### A. Next.js Application Setup & Routing
+### A. Next.js Application Setup & Routing — 🟡 `PARTIAL (5/7 complete)`
 
 **What:** Establish the foundational app architecture — routing, layout, metadata, fonts, and global styles.
 
@@ -136,7 +136,7 @@ LUMO_FINANCE/
 
 ---
 
-### B. Authentication Pages
+### B. Authentication Pages — 🟡 `PARTIAL (2/8 complete)`
 
 **What:** Build the login and registration flows. First thing a judge sees after the landing page.
 
@@ -167,7 +167,7 @@ LUMO_FINANCE/
 
 ---
 
-### C. Dashboard
+### C. Dashboard — 🟡 `PARTIAL (3/5 complete)`
 
 **What:** The main product screen. Chat on one side, wallet + transactions on the other. This is the core experience judges will demo.
 
@@ -194,7 +194,7 @@ LUMO_FINANCE/
 
 ---
 
-### D. Chat Interface (Core UX)
+### D. Chat Interface (Core UX) — 🟡 `PARTIAL (3/12 complete)` — ⚠️ CRITICAL GAP
 
 **What:** The heart of Lumo. Every financial action flows here. Must feel fast, smart, and trustworthy. Judges will type into this live.
 
@@ -246,7 +246,7 @@ LUMO_FINANCE/
 
 ---
 
-### E. Transactions Page
+### E. Transactions Page — ❌ `NOT STARTED (stub only)`
 
 **What:** Full-page transaction history. Judges check here to see Nomba API data surfaced properly.
 
@@ -272,7 +272,7 @@ LUMO_FINANCE/
 
 ---
 
-### F. Settings Page
+### F. Settings Page — ❌ `NOT STARTED (stub only)`
 
 **What:** User profile and account management.
 
@@ -290,7 +290,7 @@ LUMO_FINANCE/
 
 ---
 
-### G. Responsive Design & Mobile Optimization
+### G. Responsive Design & Mobile Optimization — 🟡 `PARTIAL (3/6 complete)`
 
 **What:** Nigerian users are majority mobile. The app must work perfectly on phones.
 
@@ -307,7 +307,7 @@ LUMO_FINANCE/
 
 ---
 
-### H. Animations & Motion Design
+### H. Animations & Motion Design — 🟡 `PARTIAL (1/8 complete)`
 
 **What:** Motion makes Lumo feel alive and premium. Framer Motion is already in `package.json`.
 
@@ -330,7 +330,7 @@ LUMO_FINANCE/
 
 ---
 
-### I. Loading, Empty & Error States
+### I. Loading, Empty & Error States — ❌ `PARTIAL (1/6 complete) — spinner only`
 
 **What:** Every screen in all 7 states. This is what separates amateur from production-quality work.
 
@@ -358,7 +358,7 @@ LUMO_FINANCE/
 
 ---
 
-### J. Accessibility
+### J. Accessibility — ❌ `PARTIAL (2/9 complete)`
 
 **Engineering Playbook Minimum Checklist:**
 - [ ] All images have descriptive `alt` text
@@ -373,7 +373,7 @@ LUMO_FINANCE/
 
 ---
 
-### K. State Management
+### K. State Management — 🟡 `PARTIAL (1/4 complete)`
 
 **What:** Zustand for global state, TanStack Query for server state.
 
@@ -396,7 +396,7 @@ LUMO_FINANCE/
 
 ---
 
-### L. API Integration (Frontend Side)
+### L. API Integration (Frontend Side) — 🟡 `PARTIAL (1/4 complete)` — ⚠️ Chat API is dead code
 
 **What:** Wire your UI to the Next.js API routes (which proxy to the Cloudflare Worker).
 
@@ -420,7 +420,7 @@ LUMO_FINANCE/
 
 ---
 
-### M. Reusable Components Library
+### M. Reusable Components Library — 🟡 `PARTIAL (4/16 complete)`
 
 **What:** A clean, consistent component library the whole team can use.
 
@@ -461,7 +461,7 @@ app/components/
 
 ---
 
-### N. Forms & Validation
+### N. Forms & Validation — 🟡 `PARTIAL (2/5 complete)`
 
 **What:** All user input validated before submission. React Hook Form (already installed).
 
@@ -480,7 +480,7 @@ app/components/
 
 ---
 
-### O. Transaction Receipts & Confirmations
+### O. Transaction Receipts & Confirmations — ❌ `NOT STARTED` — 🚨 HIGHEST PRIORITY FOR JUDGING
 
 **What:** The fintech moment of truth. Must inspire total trust. This is where your Nomba integration score lives.
 
