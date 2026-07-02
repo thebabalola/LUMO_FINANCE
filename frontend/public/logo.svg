@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Shield body -->
+  <path d="M32 4 L56 15 L56 36 C56 50 44 59 32 62 C20 59 8 50 8 36 L8 15 Z" fill="#0F172A" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Shield inner glow layer -->
+  <path d="M32 10 L50 19 L50 36 C50 47 41 54 32 57 C23 54 14 47 14 36 L14 19 Z" fill="#7C3AED" opacity="0.18"/>
+  <!-- Lightning bolt (pure path, no text) -->
+  <path d="M36 20 L27 35 L33 35 L28 46 L39 31 L33 31 L38 20 Z" fill="#F97316" stroke="#F97316" stroke-width="0.5" stroke-linejoin="round"/>
+  <!-- Small orange dot accent at bottom of shield -->
+  <circle cx="32" cy="55" r="2" fill="#F97316" opacity="0.7"/>
+</svg>

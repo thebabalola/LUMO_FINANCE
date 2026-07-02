@@ -6,6 +6,28 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Light mode definitions */
+    --color-brown: 252 236 220; /* FCECDC */
+    --color-brown-light: 242 222 201;
+    --color-cream: 50 10 3; /* 320A03 */
+    --color-ember: 235 96 40; /* EB6028 */
+    --color-ember-hover: 208 84 35; /* d05423 */
+    --color-white: 0 0 0;
+    --color-black: 255 255 255;
+  }
+
+  .dark {
+    /* Dark mode definitions */
+    --color-brown: 50 10 3;
+    --color-brown-light: 66 17 7;
+    --color-cream: 252 236 220;
+    --color-ember: 235 96 40;
+    --color-ember-hover: 208 84 35;
+    --color-white: 255 255 255;
+    --color-black: 0 0 0;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -17,11 +39,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-cream text-brown transition-colors duration-300;
-  }
-
-  .dark body {
-    @apply bg-brown text-cream;
+    @apply font-sans antialiased bg-brown text-cream transition-colors duration-300;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -34,17 +52,9 @@
     @apply transition-all duration-200 ease-out;
   }
 
-  /* Glassmorphism panel for dark mode */
+  /* Glassmorphism panel adapting via --color-white swapping */
   .glass-panel {
     @apply bg-white/5 backdrop-blur-[20px] border border-white/10;
-  }
-  
-  .dark .glass-panel {
-    @apply bg-white/5 backdrop-blur-[20px] border border-white/10;
-  }
-  
-  .light .glass-panel {
-    @apply bg-brown/5 backdrop-blur-[20px] border border-brown/10;
   }
 
   /* 3D Card Depth */

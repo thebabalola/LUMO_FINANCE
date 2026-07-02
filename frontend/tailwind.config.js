@@ -8,18 +8,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        white: 'rgb(var(--color-white) / <alpha-value>)',
+        black: 'rgb(var(--color-black) / <alpha-value>)',
         cream: {
-          DEFAULT: '#FCECDC',
-          muted: 'rgba(252, 236, 220, 0.7)',
-          darkMuted: 'rgba(252, 236, 220, 0.5)',
+          DEFAULT: 'rgb(var(--color-cream) / <alpha-value>)',
+          muted: 'rgb(var(--color-cream) / 0.7)',
+          darkMuted: 'rgb(var(--color-cream) / 0.5)',
         },
         ember: {
-          DEFAULT: '#EB6028',
-          hover: '#d05423',
+          DEFAULT: 'rgb(var(--color-ember) / <alpha-value>)',
+          hover: 'rgb(var(--color-ember-hover) / <alpha-value>)',
         },
         brown: {
-          DEFAULT: '#320A03',
-          light: '#421107',
+          DEFAULT: 'rgb(var(--color-brown) / <alpha-value>)',
+          light: 'rgb(var(--color-brown-light) / <alpha-value>)',
         },
         success: '#22C55E',
         danger: '#EF4444',

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { MessageSquare, LayoutList, Settings, LogOut, Menu, X } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
+import { ThemeToggle } from './ui/theme-toggle'
 
 const navItems = [
   { name: 'Chat', href: '/dashboard', icon: MessageSquare },
@@ -70,6 +71,9 @@ export function Sidebar() {
             <p className="text-xs text-cream/50 truncate">t.babalolajoseph@gmail.com</p>
           </div>
         </div>
+        <div className="flex gap-2 mb-4">
+          <ThemeToggle />
+        </div>
         <button className="flex w-full items-center gap-3 px-4 py-2 text-sm text-danger hover:bg-white/5 rounded-lg transition-colors">
           {mounted && <LogOut size={16} />}
           Sign Out
@@ -88,9 +92,12 @@ export function Sidebar() {
           </div>
           <span className="font-heading text-xl text-cream font-bold">Lumo</span>
         </div>
-        <button className="text-cream" onClick={() => setMobileMenuOpen(true)}>
-          {mounted && <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button className="text-cream" onClick={() => setMobileMenuOpen(true)}>
+            {mounted && <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Desktop Sidebar */}
