@@ -1,18 +1,38 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Eye, EyeOff, Send, Smartphone, Wifi, ReceiptText } from 'lucide-react'
+import { Eye, EyeOff, Send, Smartphone, Wifi, ReceiptText, Loader2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-
 
 export function WalletCard() {
   const [showBalance, setShowBalance] = useState(true)
   const [displayBalance, setDisplayBalance] = useState(0)
-  
-  const targetBalance = 125430
+  const [targetBalance, setTargetBalance] = useState(0)
+  const [accountNumber, setAccountNumber] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
   
   useEffect(() => {
-    if (showBalance) {
+    async function fetchWallet() {
+      try {
+        const res = await fetch('/api/wallet')
+        if (!res.ok) throw new Error('Failed to fetch wallet')
+        const data = await res.json()
+        setTargetBalance(data.balance)
+        setAccountNumber(data.accountNumber)
+      } catch (err) {
+        console.error(err)
+        // Fallback for demo
+        setTargetBalance(125430)
+        setAccountNumber('0123456789')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchWallet()
+  }, [])
+  
+  useEffect(() => {
+    if (showBalance && !isLoading) {
       let current = 0
       const duration = 1200
       const steps = 60
@@ -34,7 +54,7 @@ export function WalletCard() {
       setDisplayBalance(0)
       return undefined
     }
-  }, [showBalance])
+  }, [showBalance, targetBalance, isLoading])
 
 
   return (
@@ -42,7 +62,9 @@ export function WalletCard() {
       <div className="flex justify-between items-start mb-6">
         <div>
           <p className="text-sm text-cream/70 mb-1">Total Balance</p>
-          {showBalance ? (
+          {isLoading ? (
+            <div className="h-9 w-40 bg-white/10 animate-pulse rounded-md mb-1"></div>
+          ) : showBalance ? (
             <h2 className="text-3xl font-heading font-bold text-cream">
               ₦{displayBalance.toLocaleString()}
             </h2>
@@ -51,13 +73,19 @@ export function WalletCard() {
               ••••••
             </h2>
           )}
-          <p className="text-sm text-cream/50 mt-1">Lumo Wallet • 0123456789</p>
+          
+          {isLoading ? (
+            <div className="h-5 w-32 bg-white/10 animate-pulse rounded-md mt-1"></div>
+          ) : (
+            <p className="text-sm text-cream/50 mt-1">Lumo Wallet • {accountNumber}</p>
+          )}
         </div>
         <button 
           onClick={() => setShowBalance(!showBalance)}
-          className="text-cream/50 hover:text-cream transition-colors p-2 bg-white/5 rounded-lg"
+          disabled={isLoading}
+          className="text-cream/50 hover:text-cream transition-colors p-2 bg-white/5 rounded-lg disabled:opacity-50"
         >
-          {showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
+          {isLoading ? <Loader2 size={18} className="animate-spin" /> : showBalance ? <EyeOff size={18} /> : <Eye size={18} />}
         </button>
       </div>
 

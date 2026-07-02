@@ -4,6 +4,9 @@ import { Message } from '@/types/chat'
 import { formatTime } from '@/lib/utils'
 import { Copy, Bot } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { TransactionConfirmationCard, TransactionIntent } from '../transactions/transaction-confirmation'
+import { TransactionReceiptCard } from '../transactions/transaction-receipt'
+import { useChatStore } from '@/store/chat-store'
 
 interface ChatMessagesProps {
   messages: Message[]
@@ -11,6 +14,7 @@ interface ChatMessagesProps {
 }
 
 export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
+  const { updateMessage, addMessage } = useChatStore()
   
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -20,6 +24,28 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
         color: '#FCECDC',
         border: '1px solid rgba(255,255,255,0.1)'
       }
+    })
+  }
+
+  const handleConfirm = async (messageId: string, intent: TransactionIntent) => {
+    // In a real app, we would make a POST to /api/transactions/execute here
+    // Simulating API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    // On success, replace intent with receipt
+    updateMessage(messageId, {
+      intent: undefined, // remove intent to swap to receipt card
+      receipt: { reference: `NMB-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000)}` },
+      // preserve the intent data in a separate field if needed, but we can also just keep it
+      // actually, TransactionReceiptCard needs the intent data. Let's keep intent on the message but add receipt!
+      intent: intent
+    })
+  }
+
+  const handleCancel = (messageId: string) => {
+    updateMessage(messageId, {
+      intent: undefined,
+      content: 'Transaction cancelled.'
     })
   }
 
@@ -44,7 +70,7 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
                 message.role === 'user' ? 'justify-end' : 'justify-start'
               }`}
             >
-              <div className={`flex gap-3 max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <div className={`flex gap-3 max-w-full md:max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 
                 {message.role === 'assistant' && (
                   <div className="w-8 h-8 rounded-full bg-ember/20 text-ember flex items-center justify-center flex-shrink-0 mt-1">
@@ -61,6 +87,37 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
                     }`}
                   >
                     <p className="text-sm leading-relaxed">{message.content}</p>
+                    
+                    {/* Render Confirmation Card if intent exists and no receipt yet */}
+                    {message.intent && !message.receipt && (
+                      <div className="mt-4 mb-1">
+                        <TransactionConfirmationCard 
+                          intent={message.intent}
+                          onConfirm={() => handleConfirm(message.id, message.intent!)}
+                          onCancel={() => handleCancel(message.id)}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Render Receipt Card if receipt exists */}
+                    {message.receipt && message.intent && (
+                      <div className="mt-4 mb-1">
+                        <TransactionReceiptCard 
+                          intent={message.intent}
+                          reference={message.receipt.reference}
+                          onDone={() => {
+                            // Can just scroll or acknowledge
+                            addMessage({
+                              id: Date.now().toString(),
+                              content: 'Is there anything else you need help with?',
+                              role: 'assistant',
+                              timestamp: new Date()
+                            })
+                          }}
+                        />
+                      </div>
+                    )}
+
                   </div>
                   
                   <div className={`flex items-center mt-1 gap-2 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -103,4 +160,5 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
     </div>
   )
 }
+
 

@@ -47,6 +47,7 @@ export default function ChatInterface() {
         content: data.response,
         role: 'assistant',
         timestamp: new Date(),
+        intent: data.intent,
       })
     } catch (error) {
       console.error('Chat error:', error)

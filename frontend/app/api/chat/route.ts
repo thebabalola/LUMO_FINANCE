@@ -24,6 +24,46 @@ export async function POST(request: NextRequest) {
       content: message,
     })
 
+    // --- MOCK DEMO INTERCEPTS ---
+    const lowerMessage = message.toLowerCase()
+    if (lowerMessage.includes('send') && lowerMessage.includes('john')) {
+      return NextResponse.json({
+        response: 'I can help you send ₦10,000 to John Doe. Please confirm the transaction details below:',
+        intent: {
+          type: 'transfer',
+          recipientName: 'John Doe',
+          bankOrProvider: 'GTBank',
+          accountOrPhone: '0123456789',
+          amount: 10000,
+          fee: 52.50,
+          total: 10052.50
+        }
+      })
+    }
+    
+    if (lowerMessage.includes('airtime') && lowerMessage.includes('1,000')) {
+      return NextResponse.json({
+        response: 'I can help you buy ₦1,000 airtime. Please confirm the details below:',
+        intent: {
+          type: 'airtime',
+          recipientName: 'Self',
+          bankOrProvider: 'MTN',
+          accountOrPhone: '08012345678',
+          amount: 1000,
+          fee: 0,
+          total: 1000
+        }
+      })
+    }
+    
+    // Fallback if WORKER_BASE_URL is not set for demo
+    if (!WORKER_BASE_URL) {
+      return NextResponse.json({
+        response: "I'm Lumo in demo mode! I've received your message. Try saying 'Send ₦10k to John' to see a transaction confirmation."
+      })
+    }
+    // --- END MOCK ---
+
     // Call Claude via Cloudflare Worker
     const response = await fetch(`${WORKER_BASE_URL}/chat`, {
       method: 'POST',
