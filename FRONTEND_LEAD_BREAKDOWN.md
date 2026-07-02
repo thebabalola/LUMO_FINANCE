@@ -719,8 +719,9 @@ These are all the proposed colour palette options. Pick one before coding and st
 
 ---
 
-> 💡 **Suggested pick:** **Option C (Ember & Terracotta)** as primary + elements of **Option B (Sapphire)** for trust signals (e.g. CTA buttons, confirmation states).  
-> But listing them all here so the team can decide together.
+> ✅ **Confirmed pick:** **Option C (Ember & Terracotta) — 3-colour system only.**  
+> `#FCECDC` and `#EB6028` are the two primary colours used interchangeably by mode.  
+> `#320A03` handles CTAs, anchoring text, and deep accents. No other palette is in use.
 
 ---
 
@@ -1053,7 +1054,7 @@ Once a user is logged in, they are not browsing — they are *doing tasks*. The 
 - Ember gradient glow radiating from bottom of hero upward
 - Navbar links: `#FCECDC` (Cream) at 80% opacity
 - Hero headline: `#FCECDC` full opacity, bold display font
-- "Get Started" CTA button: `#0F52BA` (Sapphire) — trust-coded
+- "Get Started" CTA button: `#320A03` (Deep Brown) — anchored, authoritative
 - Feature card backgrounds: glassmorphic overlay on `#320A03`
 
 ---
@@ -1142,30 +1143,43 @@ The dashboard is where judges spend the most time. Three-column composition: sid
 
 ### 9.5 — Confirmed Colour Token Mapping
 
-Colour scheme locked: **Option C (Ember & Terracotta) + Sapphire trust layer**
+Colour scheme locked: **Option C — 3-colour system, mode-aware**
+
+> This is a pure 3-colour palette. `#FCECDC` and `#EB6028` are the two primary colours and swap roles depending on light or dark mode. `#320A03` is the constant anchor used for CTAs, deep text, and structural elements in both modes.
+
+#### Light Mode
 
 ```
-Token               Hex Value            Usage
-─────────────────   ──────────────────   ────────────────────────────────────────────
-Deep Brown          #320A03              Sidebar bg, hero section bg, page dark base
-Ember Orange        #EB6028              Logo accent, active nav, quick action btns,
-                                         notification dots, hover highlights
-Cream               #FCECDC              Body text on dark, card overlay tint,
-                                         input placeholder base
-Sapphire            #0F52BA              ALL money-moving CTAs: "Confirm", "Send",
-                                         "Get Started", "Pay Now" — trust-coded
-Off-White           #FFFFFA              Primary text on dark surfaces
-Muted Cream         rgba(252,236,220,.5) Secondary text, timestamps, labels
-Success Green       #22C55E              Receipt checkmark, "Successful" badge,
-                                         transaction success toast
-Danger Red          #EF4444              Failed transactions, destructive actions,
-                                         "Cancel" in high-stakes contexts
+Token               Hex Value            Role in Light Mode
+─────────────────   ──────────────────   ──────────────────────────────────────────────────
+Cream (PRIMARY)     #FCECDC              Page background, card surfaces, main bg
+Ember (SECONDARY)   #EB6028              Headings, icons, active states, emphasis text
+Deep Brown          #320A03              CTAs (buttons), strong body text, nav text,
+                                         borders, footer backgrounds
+Muted Cream         rgba(252,236,220,.7) Placeholder text, secondary labels, captions
+Success Green       #22C55E              Receipt checkmark, "Successful" badge, toasts
+Danger Red          #EF4444              Failed transactions, error states, destructive
 ```
 
-**The core rule — never break this:**
-> `#EB6028` (Orange) = brand personality, warmth, African identity  
-> `#0F52BA` (Sapphire) = trust, money movement, confirmation  
-> Swapping them would make the UI feel untrustworthy. Orange on a "Confirm Transfer" button signals danger, not action.
+#### Dark Mode
+
+```
+Token               Hex Value            Role in Dark Mode
+─────────────────   ──────────────────   ──────────────────────────────────────────────────
+Ember (PRIMARY)     #EB6028              Page background tint, card surface overlay,
+                                         primary surface colour
+Cream (SECONDARY)   #FCECDC              Headings, body text, icon fills, active states
+Deep Brown          #320A03              Sidebar bg, hero bg, page dark base, CTA buttons,
+                                         deep surfaces, footer
+Muted Cream         rgba(252,236,220,.5) Timestamps, secondary labels, placeholders
+Success Green       #22C55E              Receipt checkmark, "Successful" badge, toasts
+Danger Red          #EF4444              Failed transactions, error states, destructive
+```
+
+**The mode-swap rule:**
+> 🌤 **Light mode:** `#FCECDC` leads (backgrounds, surfaces) — `#EB6028` accents (text, icons, highlights)  
+> 🌑 **Dark mode:** `#EB6028` leads (surfaces, primary colour) — `#FCECDC` accents (text, icons, highlights)  
+> `#320A03` never swaps — it is always the deep anchor: CTAs, structural text, sidebar, footer
 
 ---
 
@@ -1218,10 +1232,10 @@ Danger Red          #EF4444              Failed transactions, destructive action
 | **Mobile dashboard** | Stacked: wallet card above, chat below | Chat stays at bottom — thumb-friendly |
 | **Chat input position** | Sticky bottom | Always reachable — it's the core action |
 | **Sidebar width** | 240px | Enough for icon + label; not so wide it competes with content |
-| **Colour: brand/personality** | `#EB6028` Ember Orange | Warmth, uniqueness, West African identity |
-| **Colour: trust/CTAs** | `#0F52BA` Sapphire | Blue = trust = money movement — non-negotiable |
-| **Colour: dark base** | `#320A03` Deep Brown | Premium, memorable, nothing in fintech looks like this |
-| **Colour: surfaces** | `#FCECDC` Cream tint | Warm card overlays, prevents harsh contrast on deep brown |
+| **Colour: light mode primary** | `#FCECDC` Cream | Page bg, card surfaces — leads in light mode |
+| **Colour: dark mode primary** | `#EB6028` Ember Orange | Surface colour — leads in dark mode |
+| **Colour: constant anchor** | `#320A03` Deep Brown | CTAs, sidebar, footer, deep text — never swaps |
+| **Colour system** | 3-colour mode-aware | Cream ↔ Orange swap by mode; Brown anchors both |
 
 ---
 
