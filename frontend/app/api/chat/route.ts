@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const WORKER_BASE_URL = process.env.NEXT_PUBLIC_WORKER_BASE_URL
+// Points at the Go backend's /api/v1 (conversation memory lives server-side
+// there, so no history is forwarded from the client anymore).
+const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_WORKER_BASE_URL
+
+// TODO(frontend-auth workstream): replace this dev-only server env token
+// with the logged-in user's access token once frontend auth lands.
+const DEV_BEARER_TOKEN = process.env.LUMO_DEV_BEARER_TOKEN
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, history } = await request.json()
+    const { message, conversationId } = await request.json()
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json(
@@ -13,48 +19,28 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Convert message history to Claude format
-    const messages = history.map((msg: any) => ({
-      role: msg.role,
-      content: msg.content,
-    }))
-
-    messages.push({
-      role: 'user',
-      content: message,
-    })
-
-    // Call Claude via Cloudflare Worker
-    const response = await fetch(`${WORKER_BASE_URL}/chat`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(DEV_BEARER_TOKEN ? { Authorization: `Bearer ${DEV_BEARER_TOKEN}` } : {}),
       },
       body: JSON.stringify({
-        messages,
-        system: `You are Lumo, an AI financial assistant for managing finances in Nigeria.
-
-You can help users with:
-- Sending money to bank accounts
-- Checking account balance
-- Buying airtime and data
-- Paying bills
-- Analyzing spending
-- Getting transaction history
-
-Always be clear about transaction details before execution. Every financial action requires explicit user confirmation.
-Respond conversationally and use Nigerian Naira (₦) for currency.`,
+        message,
+        conversation_id: conversationId ?? undefined,
       }),
     })
 
     if (!response.ok) {
-      throw new Error(`Worker responded with ${response.status}`)
+      throw new Error(`Backend responded with ${response.status}`)
     }
 
     const data = await response.json()
 
     return NextResponse.json({
-      response: data.content || data.message,
+      response: data.message,
+      conversationId: data.conversation_id,
+      pendingAction: data.pending_action ?? null,
     })
   } catch (error) {
     console.error('Chat API error:', error)

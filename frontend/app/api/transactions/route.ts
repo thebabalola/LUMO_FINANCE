@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   try {
     const limit = request.nextUrl.searchParams.get('limit') || '10'
-    const skip = request.nextUrl.searchParams.get('skip') || '0'
 
     // In a real app, fetch from Nomba API via Worker
     // For now, return mock data

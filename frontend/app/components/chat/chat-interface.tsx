@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import ChatMessages from './chat-messages'
 import ChatInput from './chat-input'
 import { useChatStore } from '@/store/chat-store'
 
 export default function ChatInterface() {
-  const { messages, addMessage, loading } = useChatStore()
+  const { messages, addMessage, loading, setLoading, conversationId, setConversationId } = useChatStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -25,19 +25,24 @@ export default function ChatInterface() {
       timestamp: new Date(),
     })
 
+    setLoading(true)
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: content,
-          history: messages,
+          conversationId,
         }),
       })
 
       if (!response.ok) throw new Error('Failed to get response')
 
       const data = await response.json()
+
+      if (data.conversationId) {
+        setConversationId(data.conversationId)
+      }
 
       addMessage({
         id: (Date.now() + 1).toString(),
@@ -53,6 +58,8 @@ export default function ChatInterface() {
         role: 'assistant',
         timestamp: new Date(),
       })
+    } finally {
+      setLoading(false)
     }
   }
 
