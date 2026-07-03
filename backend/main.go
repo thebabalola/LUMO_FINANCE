@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 
+	"github.com/vatilize-labs/lumo-finance/internal/audit"
 	"github.com/vatilize-labs/lumo-finance/internal/auth"
 	"github.com/vatilize-labs/lumo-finance/internal/config"
 	"github.com/vatilize-labs/lumo-finance/internal/db"
@@ -44,9 +46,10 @@ func main() {
 	tokenIssuer := auth.NewTokenIssuer(appConfig.JWTSecret, appConfig.AccessTokenTTL)
 	refreshTokenStore := auth.NewRefreshTokenStore(redisClient, appConfig.RefreshTokenTTL)
 	otpService := otp.NewOneTimePasswordService(redisClient, otp.NewConsoleSender(), appConfig.OTPTTL)
+	auditRecorder := audit.NewRecorder(dbPool)
 
 	// Services
-	authService := services.NewAuthService(dbPool, tokenIssuer, refreshTokenStore, otpService)
+	authService := services.NewAuthService(dbPool, tokenIssuer, refreshTokenStore, otpService, auditRecorder)
 
 	app := fiber.New(fiber.Config{
 		AppName: "Lumo Finance API",
@@ -65,14 +68,17 @@ func main() {
 	})
 
 	api := app.Group("/api/v1")
+	api.Use(middleware.RateLimit(redisClient, middleware.RateLimitByIP("global", 100, time.Minute)))
 
-	// Auth routes (public)
+	// Auth routes (public, tighter limits against brute force)
+	authRateLimit := middleware.RateLimit(redisClient, middleware.RateLimitByIP("auth", 10, time.Minute))
+	otpRateLimit := middleware.RateLimit(redisClient, middleware.RateLimitByIP("otp", 5, time.Minute))
 	authHandler := handlers.NewAuthHandler(authService)
-	api.Post("/auth/register", authHandler.Register)
-	api.Post("/auth/verify-otp", authHandler.VerifyOTP)
-	api.Post("/auth/login", authHandler.Login)
-	api.Post("/auth/refresh", authHandler.Refresh)
-	api.Post("/auth/logout", authHandler.Logout)
+	api.Post("/auth/register", authRateLimit, authHandler.Register)
+	api.Post("/auth/verify-otp", otpRateLimit, authHandler.VerifyOTP)
+	api.Post("/auth/login", authRateLimit, authHandler.Login)
+	api.Post("/auth/refresh", authRateLimit, authHandler.Refresh)
+	api.Post("/auth/logout", authRateLimit, authHandler.Logout)
 
 	// Protected routes
 	protected := api.Group("")

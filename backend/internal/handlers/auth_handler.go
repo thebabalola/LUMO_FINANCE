@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/vatilize-labs/lumo-finance/internal/audit"
 	"github.com/vatilize-labs/lumo-finance/internal/auth"
 	"github.com/vatilize-labs/lumo-finance/internal/otp"
 	"github.com/vatilize-labs/lumo-finance/internal/services"
@@ -30,7 +31,7 @@ func (handler *AuthHandler) Register(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	userID, err := handler.authService.Register(c.Context(), input)
+	userID, err := handler.authService.Register(c.Context(), input, audit.RequestInfoFromFiber(c))
 	if err != nil {
 		if errors.Is(err, services.ErrEmailAlreadyRegistered) {
 			return fiber.NewError(fiber.StatusConflict, err.Error())
@@ -58,7 +59,7 @@ func (handler *AuthHandler) VerifyOTP(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	tokenPair, err := handler.authService.VerifyOTP(c.Context(), request.Email, request.Code)
+	tokenPair, err := handler.authService.VerifyOTP(c.Context(), request.Email, request.Code, audit.RequestInfoFromFiber(c))
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrUserNotFound):
@@ -88,7 +89,7 @@ func (handler *AuthHandler) Login(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	tokenPair, userProfile, err := handler.authService.Login(c.Context(), request.Email, request.Password)
+	tokenPair, userProfile, err := handler.authService.Login(c.Context(), request.Email, request.Password, audit.RequestInfoFromFiber(c))
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrInvalidCredentials):
@@ -120,7 +121,7 @@ func (handler *AuthHandler) Refresh(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	tokenPair, err := handler.authService.Refresh(c.Context(), request.RefreshToken)
+	tokenPair, err := handler.authService.Refresh(c.Context(), request.RefreshToken, audit.RequestInfoFromFiber(c))
 	if err != nil {
 		if errors.Is(err, auth.ErrRefreshTokenNotFound) {
 			return fiber.NewError(fiber.StatusUnauthorized, "refresh token is invalid or expired")
@@ -135,7 +136,7 @@ func (handler *AuthHandler) Logout(c *fiber.Ctx) error {
 	if err := c.BodyParser(&request); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid request body")
 	}
-	if err := handler.authService.Logout(c.Context(), request.RefreshToken); err != nil {
+	if err := handler.authService.Logout(c.Context(), request.RefreshToken, audit.RequestInfoFromFiber(c)); err != nil {
 		return err
 	}
 	return c.JSON(fiber.Map{"message": "Logged out"})
@@ -156,7 +157,7 @@ func (handler *AuthHandler) SetTransactionPin(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
-	if err := handler.authService.SetTransactionPin(c.Context(), userID, request.Pin); err != nil {
+	if err := handler.authService.SetTransactionPin(c.Context(), userID, request.Pin, audit.RequestInfoFromFiber(c)); err != nil {
 		return err
 	}
 	return c.JSON(fiber.Map{"message": "Transaction PIN set"})

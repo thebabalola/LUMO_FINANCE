@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/vatilize-labs/lumo-finance/internal/audit"
 	"github.com/vatilize-labs/lumo-finance/internal/auth"
 	"github.com/vatilize-labs/lumo-finance/internal/models"
 	"github.com/vatilize-labs/lumo-finance/internal/otp"
@@ -29,6 +30,7 @@ type AuthService struct {
 	tokenIssuer       *auth.TokenIssuer
 	refreshTokenStore *auth.RefreshTokenStore
 	otpService        *otp.OneTimePasswordService
+	auditRecorder     *audit.Recorder
 }
 
 type RegisterInput struct {
@@ -49,16 +51,18 @@ func NewAuthService(
 	tokenIssuer *auth.TokenIssuer,
 	refreshTokenStore *auth.RefreshTokenStore,
 	otpService *otp.OneTimePasswordService,
+	auditRecorder *audit.Recorder,
 ) *AuthService {
 	return &AuthService{
 		dbPool:            dbPool,
 		tokenIssuer:       tokenIssuer,
 		refreshTokenStore: refreshTokenStore,
 		otpService:        otpService,
+		auditRecorder:     auditRecorder,
 	}
 }
 
-func (service *AuthService) Register(ctx context.Context, input RegisterInput) (string, error) {
+func (service *AuthService) Register(ctx context.Context, input RegisterInput, requestInfo audit.RequestInfo) (string, error) {
 	passwordHash, err := auth.HashPassword(input.Password)
 	if err != nil {
 		return "", err
@@ -82,12 +86,21 @@ func (service *AuthService) Register(ctx context.Context, input RegisterInput) (
 	if err := service.otpService.GenerateAndSend(ctx, otpPurposeRegister, userID, input.Email); err != nil {
 		return "", fmt.Errorf("failed to send verification code: %w", err)
 	}
+
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:       userID,
+		EventType:    "user.registered",
+		ResourceType: "user",
+		ResourceID:   userID,
+		IPAddress:    requestInfo.IPAddress,
+		UserAgent:    requestInfo.UserAgent,
+	})
 	return userID, nil
 }
 
 // VerifyOTP activates the account, creates the user's wallet, and signs
 // the user in by issuing their first token pair.
-func (service *AuthService) VerifyOTP(ctx context.Context, email string, code string) (*TokenPair, error) {
+func (service *AuthService) VerifyOTP(ctx context.Context, email string, code string, requestInfo audit.RequestInfo) (*TokenPair, error) {
 	user, err := service.findUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
@@ -111,19 +124,40 @@ func (service *AuthService) VerifyOTP(ctx context.Context, email string, code st
 		return nil, err
 	}
 
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:       user.ID,
+		EventType:    "auth.otp_verified",
+		ResourceType: "user",
+		ResourceID:   user.ID,
+		IPAddress:    requestInfo.IPAddress,
+		UserAgent:    requestInfo.UserAgent,
+	})
 	return service.issueTokenPair(ctx, user.ID)
 }
 
-func (service *AuthService) Login(ctx context.Context, email string, password string) (*TokenPair, *models.UserProfile, error) {
+func (service *AuthService) Login(ctx context.Context, email string, password string, requestInfo audit.RequestInfo) (*TokenPair, *models.UserProfile, error) {
 	user, err := service.findUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, ErrUserNotFound) {
+			service.auditRecorder.Record(ctx, audit.Event{
+				EventType: "auth.login_failed",
+				IPAddress: requestInfo.IPAddress,
+				UserAgent: requestInfo.UserAgent,
+				Metadata:  map[string]interface{}{"email": email, "reason": "unknown_email"},
+			})
 			return nil, nil, ErrInvalidCredentials
 		}
 		return nil, nil, err
 	}
 
 	if !auth.ComparePassword(user.PasswordHash, password) {
+		service.auditRecorder.Record(ctx, audit.Event{
+			UserID:    user.ID,
+			EventType: "auth.login_failed",
+			IPAddress: requestInfo.IPAddress,
+			UserAgent: requestInfo.UserAgent,
+			Metadata:  map[string]interface{}{"reason": "wrong_password"},
+		})
 		return nil, nil, ErrInvalidCredentials
 	}
 	if user.Status == "pending_verification" {
@@ -137,12 +171,19 @@ func (service *AuthService) Login(ctx context.Context, email string, password st
 	if err != nil {
 		return nil, nil, err
 	}
+
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:    user.ID,
+		EventType: "auth.login_success",
+		IPAddress: requestInfo.IPAddress,
+		UserAgent: requestInfo.UserAgent,
+	})
 	return tokenPair, user.ToProfile(), nil
 }
 
 // Refresh rotates the presented refresh token. Presenting an already-rotated
 // token is treated as theft: every session for that user is revoked.
-func (service *AuthService) Refresh(ctx context.Context, refreshToken string) (*TokenPair, error) {
+func (service *AuthService) Refresh(ctx context.Context, refreshToken string, requestInfo audit.RequestInfo) (*TokenPair, error) {
 	userID, newRefreshToken, err := service.refreshTokenStore.Rotate(ctx, refreshToken)
 	if err != nil {
 		return nil, err
@@ -152,6 +193,13 @@ func (service *AuthService) Refresh(ctx context.Context, refreshToken string) (*
 	if err != nil {
 		return nil, err
 	}
+
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:    userID,
+		EventType: "auth.token_refreshed",
+		IPAddress: requestInfo.IPAddress,
+		UserAgent: requestInfo.UserAgent,
+	})
 	return &TokenPair{
 		AccessToken:  accessToken,
 		RefreshToken: newRefreshToken,
@@ -159,19 +207,29 @@ func (service *AuthService) Refresh(ctx context.Context, refreshToken string) (*
 	}, nil
 }
 
-func (service *AuthService) Logout(ctx context.Context, refreshToken string) error {
-	_, err := service.refreshTokenStore.Revoke(ctx, refreshToken)
+func (service *AuthService) Logout(ctx context.Context, refreshToken string, requestInfo audit.RequestInfo) error {
+	userID, err := service.refreshTokenStore.Revoke(ctx, refreshToken)
 	if errors.Is(err, auth.ErrRefreshTokenNotFound) {
 		return nil // already logged out — treat as success
 	}
-	return err
+	if err != nil {
+		return err
+	}
+
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:    userID,
+		EventType: "auth.logout",
+		IPAddress: requestInfo.IPAddress,
+		UserAgent: requestInfo.UserAgent,
+	})
+	return nil
 }
 
 func (service *AuthService) RevokeAllSessions(ctx context.Context, userID string) error {
 	return service.refreshTokenStore.RevokeAllForUser(ctx, userID)
 }
 
-func (service *AuthService) SetTransactionPin(ctx context.Context, userID string, pin string) error {
+func (service *AuthService) SetTransactionPin(ctx context.Context, userID string, pin string, requestInfo audit.RequestInfo) error {
 	pinHash, err := auth.HashTransactionPin(pin)
 	if err != nil {
 		return err
@@ -185,6 +243,13 @@ func (service *AuthService) SetTransactionPin(ctx context.Context, userID string
 	if commandTag.RowsAffected() == 0 {
 		return ErrUserNotFound
 	}
+
+	service.auditRecorder.Record(ctx, audit.Event{
+		UserID:    userID,
+		EventType: "auth.pin_set",
+		IPAddress: requestInfo.IPAddress,
+		UserAgent: requestInfo.UserAgent,
+	})
 	return nil
 }
 
