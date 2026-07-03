@@ -15,3 +15,4 @@ frontend/.env.local
 # Backend
 backend/.env
 backend/api
+docker-compose.override.yml
