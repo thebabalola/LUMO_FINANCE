@@ -1,52 +1,120 @@
-import Link from 'next/link'
+'use client'
 
-export default function Sidebar() {
-  return (
-    <aside className="w-64 bg-dark-800 border-r border-dark-700 p-6 flex flex-col">
-      {/* Logo */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary-400">Lumo</h1>
-        <p className="text-xs text-dark-400 mt-1">AI Financial Assistant</p>
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { MessageSquare, LayoutList, Settings, LogOut, Menu, X } from 'lucide-react'
+import { clsx } from 'clsx'
+import { useState, useEffect } from 'react'
+import { ThemeToggle } from './ui/theme-toggle'
+
+const navItems = [
+  { name: 'Chat', href: '/dashboard', icon: MessageSquare },
+  { name: 'Transactions', href: '/transactions', icon: LayoutList },
+  { name: 'Settings', href: '/settings', icon: Settings },
+]
+
+export function Sidebar() {
+  const pathname = usePathname()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full bg-brown w-[240px] shrink-0 border-r border-white/5 relative z-50">
+      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
+            <span className="text-cream font-bold text-lg font-heading">L</span>
+          </div>
+          <span className="font-heading text-xl text-cream font-bold">Lumo</span>
+        </Link>
+        {mobileMenuOpen && (
+          <button className="md:hidden text-cream" onClick={() => setMobileMenuOpen(false)}>
+            <X size={24} />
+          </button>
+        )}
       </div>
 
-      {/* Navigation */}
-      <nav className="space-y-2 flex-1">
-        <Link
-          href="/dashboard"
-          className="block px-4 py-2 rounded-lg bg-primary-600 text-white font-medium transition-smooth"
-        >
-          Dashboard
-        </Link>
-        <Link
-          href="/transactions"
-          className="block px-4 py-2 rounded-lg text-dark-300 hover:bg-dark-700 transition-smooth"
-        >
-          Transactions
-        </Link>
-        <Link
-          href="/analytics"
-          className="block px-4 py-2 rounded-lg text-dark-300 hover:bg-dark-700 transition-smooth"
-        >
-          Analytics
-        </Link>
-        <Link
-          href="/settings"
-          className="block px-4 py-2 rounded-lg text-dark-300 hover:bg-dark-700 transition-smooth"
-        >
-          Settings
-        </Link>
+      <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={clsx(
+                'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium',
+                isActive 
+                  ? 'bg-white/10 text-ember border-l-4 border-ember' 
+                  : 'text-cream/70 hover:bg-white/5 hover:text-cream border-l-4 border-transparent'
+              )}
+            >
+              {mounted && <item.icon size={20} className={isActive ? 'text-ember' : 'text-cream/70'} />}
+              {item.name}
+            </Link>
+          )
+        })}
       </nav>
 
-      {/* User section */}
-      <div className="pt-6 border-t border-dark-700">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-primary-500" />
-          <div>
-            <p className="text-sm font-medium text-dark-50">User</p>
-            <p className="text-xs text-dark-400">Account</p>
+      <div className="p-4 border-t border-white/5">
+        <div className="flex items-center gap-3 mb-4">
+          <img 
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Babalola" 
+            alt="Avatar" 
+            className="w-10 h-10 rounded-full bg-white/10"
+          />
+          <div className="flex-1 overflow-hidden">
+            <p className="text-sm font-medium text-cream truncate">Babalola</p>
+            <p className="text-xs text-cream/50 truncate">t.babalolajoseph@gmail.com</p>
           </div>
         </div>
+        <div className="flex gap-2 mb-4">
+          <ThemeToggle />
+        </div>
+        <button className="flex w-full items-center gap-3 px-4 py-2 text-sm text-danger hover:bg-white/5 rounded-lg transition-colors">
+          {mounted && <LogOut size={16} />}
+          Sign Out
+        </button>
       </div>
-    </aside>
+    </div>
+  )
+
+  return (
+    <>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden flex items-center justify-between p-4 bg-brown border-b border-white/5 w-full shrink-0 sticky top-0 z-40">
+        <div className="flex items-center gap-2">
+           <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
+            <span className="text-cream font-bold text-lg font-heading">L</span>
+          </div>
+          <span className="font-heading text-xl text-cream font-bold">Lumo</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button className="text-cream" onClick={() => setMobileMenuOpen(true)}>
+            {mounted && <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex h-screen sticky top-0">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <SidebarContent />
+        </div>
+      )}
+    </>
   )
 }
