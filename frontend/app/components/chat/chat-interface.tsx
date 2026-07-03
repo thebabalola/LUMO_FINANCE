@@ -7,7 +7,7 @@ import { useChatStore } from '@/store/chat-store'
 import { Card } from '@/components/ui/card'
 
 export default function ChatInterface() {
-  const { messages, addMessage, loading, setLoading } = useChatStore()
+  const { messages, addMessage, loading, setLoading, conversationId, setConversationId } = useChatStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -34,13 +34,17 @@ export default function ChatInterface() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: content,
-          history: messages,
+          conversationId,
         }),
       })
 
       if (!response.ok) throw new Error('Failed to get response')
 
       const data = await response.json()
+
+      if (data.conversationId) {
+        setConversationId(data.conversationId)
+      }
 
       addMessage({
         id: (Date.now() + 1).toString(),

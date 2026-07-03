@@ -28,3 +28,13 @@ artifacts/
 coding-plans/
 .vscode/
 .idea/
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# Backend
+backend/.env
+backend/api
+docker-compose.override.yml

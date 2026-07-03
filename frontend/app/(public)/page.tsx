@@ -49,7 +49,7 @@ export default function LandingPage() {
               <Zap size={16} /> <span>Powered by Nomba Infrastructure</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-heading font-bold mb-8 leading-tight tracking-tight">
-              Manage your money like you're <span className="text-ember">texting a friend.</span>
+              Manage your money like you&apos;re <span className="text-ember">texting a friend.</span>
             </h1>
             <p className="text-lg md:text-xl text-cream/70 mb-12 max-w-2xl mx-auto leading-relaxed">
               Lumo is an AI-powered financial assistant that lets you send money, pay bills, and track expenses through simple, natural conversations.
@@ -85,7 +85,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-heading font-bold mb-3">Conversational Payments</h3>
                 <p className="text-cream/70 leading-relaxed">
-                  "Send 10k to David." It's that simple. Lumo understands natural language and executes instantly.
+                  &ldquo;Send 10k to David.&rdquo; It&apos;s that simple. Lumo understands natural language and executes instantly.
                 </p>
               </Card>
               <Card className="p-8 hover:border-ember/50 transition-colors group">
@@ -94,7 +94,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-heading font-bold mb-3">Bank-Grade Security</h3>
                 <p className="text-cream/70 leading-relaxed">
-                  Protected by standard encryption and Nomba's robust, production-ready payment infrastructure.
+                  Protected by standard encryption and Nomba&apos;s robust, production-ready payment infrastructure.
                 </p>
               </Card>
               <Card className="p-8 hover:border-ember/50 transition-colors group">

@@ -99,7 +99,7 @@ func (c *Client) Request(ctx context.Context, method string, path string, reques
 	if err != nil {
 		return nil, err
 	}
-	defer httpResponse.Body.Close()
+	defer func() { _ = httpResponse.Body.Close() }()
 
 	var raw json.RawMessage
 	responseEnvelope := envelope[json.RawMessage]{Data: raw}
@@ -177,7 +177,7 @@ func (c *Client) accessToken(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer httpResponse.Body.Close()
+	defer func() { _ = httpResponse.Body.Close() }()
 
 	var responseEnvelope envelope[tokenResponse]
 	if err := json.NewDecoder(httpResponse.Body).Decode(&responseEnvelope); err != nil {

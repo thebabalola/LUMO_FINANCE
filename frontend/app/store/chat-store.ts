@@ -4,10 +4,12 @@ import { Message } from '@/types/chat'
 interface ChatStore {
   messages: Message[]
   loading: boolean
+  conversationId: string | null
   inputValue: string
   addMessage: (message: Message) => void
   updateMessage: (id: string, updates: Partial<Message>) => void
   setLoading: (loading: boolean) => void
+  setConversationId: (conversationId: string | null) => void
   setInputValue: (value: string) => void
   clearMessages: () => void
 }
@@ -15,6 +17,7 @@ interface ChatStore {
 export const useChatStore = create<ChatStore>((set) => ({
   messages: [],
   loading: false,
+  conversationId: null,
   inputValue: '',
   addMessage: (message) =>
     set((state) => ({
@@ -27,6 +30,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       ),
     })),
   setLoading: (loading) => set({ loading }),
+  setConversationId: (conversationId) => set({ conversationId }),
   setInputValue: (value) => set({ inputValue: value }),
-  clearMessages: () => set({ messages: [] }),
+  clearMessages: () => set({ messages: [], conversationId: null }),
 }))

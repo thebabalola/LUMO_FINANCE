@@ -63,7 +63,7 @@ export default function RegisterPage() {
             <h4 className="font-semibold text-cream">Bank-Grade Security</h4>
           </div>
           <p className="text-sm text-cream/70">
-            Your funds are protected by Nomba's production-grade infrastructure and end-to-end encryption.
+            Your funds are protected by Nomba&apos;s production-grade infrastructure and end-to-end encryption.
           </p>
         </div>
       </div>

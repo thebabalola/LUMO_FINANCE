@@ -15,13 +15,23 @@ export interface Message {
 
 export interface ChatRequest {
   message: string
-  history: Message[]
+  conversationId?: string | null
+}
+
+// A money-moving action the AI prepared; it executes only after the user
+// confirms with their PIN via the backend's /chat/confirm endpoint.
+export interface PendingAction {
+  action_id: string
+  type: 'transfer' | 'airtime' | 'data' | 'bill'
+  amount_kobo: number
+  recipient: string
+  recipient_name?: string
+  summary: string
+  expires_at: string
 }
 
 export interface ChatResponse {
   response: string
-  action?: {
-    type: 'transfer' | 'airtime' | 'bill' | 'balance' | 'analyze'
-    confirmed?: boolean
-  }
+  conversationId: string
+  pendingAction?: PendingAction | null
 }
