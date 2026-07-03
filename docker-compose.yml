@@ -56,6 +56,12 @@ services:
       NOMBA_API_KEY: ${NOMBA_API_KEY:-test-key}
       NOMBA_BASE_URL: https://api.nomba.com/v1
       NOMBA_MODE: sandbox
+      NOMBA_ENV: sandbox
+      NOMBA_PARENT_ACCOUNT_ID: ${NOMBA_PARENT_ACCOUNT_ID:-}
+      NOMBA_SUB_ACCOUNT_ID: ${NOMBA_SUB_ACCOUNT_ID:-}
+      NOMBA_CLIENT_ID: ${NOMBA_CLIENT_ID:-}
+      NOMBA_CLIENT_SECRET: ${NOMBA_CLIENT_SECRET:-}
+      NOMBA_WEBHOOK_SECRET: ${NOMBA_WEBHOOK_SECRET:-}
     depends_on:
       postgres:
         condition: service_healthy
