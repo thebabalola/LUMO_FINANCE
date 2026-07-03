@@ -50,7 +50,13 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       JWT_SECRET: dev-secret-key-change-in-production
-      NOMBA_API_KEY: ${NOMBA_API_KEY:-test-key}
+      NOMBA_ENV: sandbox
+      NOMBA_BASE_URL: https://sandbox.nomba.com
+      NOMBA_PARENT_ACCOUNT_ID: ${NOMBA_PARENT_ACCOUNT_ID:-}
+      NOMBA_SUB_ACCOUNT_ID: ${NOMBA_SUB_ACCOUNT_ID:-}
+      NOMBA_CLIENT_ID: ${NOMBA_CLIENT_ID:-}
+      NOMBA_CLIENT_SECRET: ${NOMBA_CLIENT_SECRET:-}
+      NOMBA_WEBHOOK_SECRET: ${NOMBA_WEBHOOK_SECRET:-}
     depends_on:
       postgres:
         condition: service_healthy

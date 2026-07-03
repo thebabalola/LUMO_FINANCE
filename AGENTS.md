@@ -36,11 +36,10 @@ ElevenLabs API (voice responses)
 |-------|---------|
 | `POST /chat` | Forward to Claude API (conversation) |
 | `POST /tts` | Forward to ElevenLabs API (text-to-speech) |
-| `POST /nomba/*` | Forward to Nomba APIs (transfers, bills, airtime) |
 | `GET /transcribe-token` | Get AssemblyAI token for voice (optional) |
 
-Worker secrets: `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, `NOMBA_API_KEY`
-Worker env vars: `NOMBA_BASE_URL`, `ELEVENLABS_VOICE_ID`
+Worker secrets: `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`
+Worker env vars: `ELEVENLABS_VOICE_ID`
 
 ## Key Files & Components
 
@@ -98,9 +97,9 @@ Worker env vars: `NOMBA_BASE_URL`, `ELEVENLABS_VOICE_ID`
 2. Claude responds with confirmation request
 3. User confirms
 4. Frontend calls `POST /api/transactions/execute` (future)
-5. API proxies to `POST /nomba/transfers` via Worker
-6. Nomba executes transaction
-7. Claude provides receipt
+5. API calls the Go backend payment service
+6. Backend executes the confirmed transaction through Nomba
+7. Backend returns a receipt/status for the frontend and AI
 
 ## Development Workflow
 
@@ -204,7 +203,7 @@ npm start           # Run production build locally
 - Check browser Network tab for 500 errors
 
 ### Transactions failing
-- Verify Nomba API key in Worker secrets
+- Verify Nomba credentials in backend `.env`
 - Check Nomba sandbox vs production URL
 - Check request format matches Nomba docs
 

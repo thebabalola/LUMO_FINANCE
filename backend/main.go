@@ -79,8 +79,15 @@ func main() {
 
 	// Transaction routes
 	transactionHandler := handlers.NewTransactionHandler(dbPool, redisClient)
+	protected.Get("/payments/banks", transactionHandler.FetchBanks)
+	protected.Post("/payments/recipients/verify", transactionHandler.VerifyRecipient)
+	protected.Get("/payments/data/plans", transactionHandler.DataPlans)
+	protected.Get("/payments/electricity/providers", transactionHandler.ElectricityProviders)
 	protected.Get("/transactions", transactionHandler.List)
 	protected.Get("/transactions/:id", transactionHandler.GetByID)
+	protected.Post("/transactions/draft", transactionHandler.CreateDraft)
+	protected.Post("/transactions/:id/confirm", transactionHandler.Confirm)
+	protected.Post("/transactions/:id/execute", transactionHandler.Execute)
 	protected.Post("/transactions/transfer", transactionHandler.CreateTransfer)
 	protected.Post("/transactions/airtime", transactionHandler.BuyAirtime)
 	protected.Post("/transactions/data", transactionHandler.BuyData)
