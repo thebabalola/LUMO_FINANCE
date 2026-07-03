@@ -59,7 +59,7 @@ cp .env.example .env
 Fill in your values:
 - `DB_*`: PostgreSQL credentials
 - `REDIS_*`: Redis connection
-- `NOMBA_API_KEY`: Nomba API key
+- `NOMBA_*`: Nomba sandbox client credentials and account IDs
 - `JWT_SECRET`: Secret for JWT tokens
 
 ### 3. Database Setup
@@ -101,10 +101,19 @@ Server runs on `http://localhost:8000`
 ### Transactions
 - `GET /api/v1/transactions` - List transactions
 - `GET /api/v1/transactions/:id` - Get transaction details
+- `POST /api/v1/transactions/draft` - Create transaction preview/draft
+- `POST /api/v1/transactions/:id/confirm` - Confirm transaction with PIN
+- `POST /api/v1/transactions/:id/execute` - Execute confirmed transaction through Nomba
 - `POST /api/v1/transactions/transfer` - Send money transfer
 - `POST /api/v1/transactions/airtime` - Buy airtime
 - `POST /api/v1/transactions/data` - Buy data
 - `POST /api/v1/transactions/bill` - Pay bill
+
+### Payments
+- `GET /api/v1/payments/banks` - Fetch supported banks from Nomba
+- `POST /api/v1/payments/recipients/verify` - Verify bank account
+- `GET /api/v1/payments/data/plans?network=MTN` - Fetch data plans
+- `GET /api/v1/payments/electricity/providers` - Fetch electricity providers
 
 ### Analytics
 - `GET /api/v1/analytics/spending` - Get spending by category
@@ -172,7 +181,9 @@ NEXT_PUBLIC_WORKER_BASE_URL=http://localhost:8000/api/v1
 
 ## Integration with Nomba
 
-This backend proxies Nomba API calls. The Nomba integration includes:
+This backend owns Nomba API calls. See [PAYMENT_CONTRACT.md](PAYMENT_CONTRACT.md) for request/response shapes and team handoff notes.
+
+The Nomba integration includes:
 
 1. **User Verification**: Verify user identity with Nomba
 2. **Bank Account Linking**: Link user's bank account
@@ -181,7 +192,7 @@ This backend proxies Nomba API calls. The Nomba integration includes:
 5. **Bills**: Pay utilities through Nomba
 6. **Webhooks**: Receive transaction updates from Nomba
 
-All Nomba API keys are stored in `.env` and never exposed to the frontend.
+All Nomba credentials are stored in `.env` and never exposed to the frontend. Nomba access tokens are obtained and cached internally using the client credentials flow.
 
 ## Architecture Decisions
 
@@ -251,7 +262,7 @@ docker build -t lumo-finance-api .
 - Test with `redis-cli ping`
 
 ### Nomba Integration Errors
-- Verify `NOMBA_API_KEY` in `.env`
+- Verify `NOMBA_PARENT_ACCOUNT_ID`, `NOMBA_SUB_ACCOUNT_ID`, `NOMBA_CLIENT_ID`, and `NOMBA_CLIENT_SECRET` in `.env`
 - Check network connectivity
 - Review Nomba API documentation
 
