@@ -6,10 +6,6 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type AuthHandler struct {
-	db *pgxpool.Pool
-}
-
 type UserHandler struct {
 	db *pgxpool.Pool
 }
@@ -28,10 +24,6 @@ type AnalyticsHandler struct {
 	db *pgxpool.Pool
 }
 
-func NewAuthHandler(db *pgxpool.Pool) *AuthHandler {
-	return &AuthHandler{db: db}
-}
-
 func NewUserHandler(db *pgxpool.Pool) *UserHandler {
 	return &UserHandler{db: db}
 }
@@ -46,19 +38,6 @@ func NewTransactionHandler(db *pgxpool.Pool, redis *redis.Client) *TransactionHa
 
 func NewAnalyticsHandler(db *pgxpool.Pool) *AnalyticsHandler {
 	return &AnalyticsHandler{db: db}
-}
-
-// Auth Handlers
-func (h *AuthHandler) Register(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"message": "Register endpoint"})
-}
-
-func (h *AuthHandler) Login(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"message": "Login endpoint"})
-}
-
-func (h *AuthHandler) Logout(c *fiber.Ctx) error {
-	return c.JSON(fiber.Map{"message": "Logout endpoint"})
 }
 
 // User Handlers
