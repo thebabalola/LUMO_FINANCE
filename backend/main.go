@@ -46,7 +46,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize Redis: %v", err)
 	}
-	defer redisClient.Close()
+	defer func() { _ = redisClient.Close() }()
 
 	// Auth building blocks
 	tokenIssuer := auth.NewTokenIssuer(appConfig.JWTSecret, appConfig.AccessTokenTTL)

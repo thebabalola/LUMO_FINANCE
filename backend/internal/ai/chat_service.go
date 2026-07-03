@@ -393,7 +393,8 @@ func (service *ChatService) appendSystemNote(ctx context.Context, userID string,
 		return
 	}
 	conversationMessages = append(conversationMessages, anthropic.NewUserMessage(anthropic.NewTextBlock(note)))
-	service.conversationStore.Save(ctx, userID, conversationID, conversationMessages)
+	// Best-effort: a note that fails to persist should not fail the request.
+	_ = service.conversationStore.Save(ctx, userID, conversationID, conversationMessages)
 }
 
 func formatNaira(amountKobo int64) string {

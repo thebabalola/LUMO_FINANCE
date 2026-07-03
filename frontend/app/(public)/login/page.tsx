@@ -60,7 +60,7 @@ export default function LoginPage() {
             <h4 className="font-semibold text-cream">Bank-Grade Security</h4>
           </div>
           <p className="text-sm text-cream/70">
-            Your funds are protected by Nomba's production-grade infrastructure and end-to-end encryption.
+            Your funds are protected by Nomba&apos;s production-grade infrastructure and end-to-end encryption.
           </p>
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function LoginPage() {
             </Button>
 
             <p className="text-center text-sm text-cream/60">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/register" className="text-ember hover:underline font-medium">
                 Create one
               </Link>

@@ -55,7 +55,7 @@ func (client *HTTPClient) postJSON(ctx context.Context, path string, payload map
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	defer func() { _ = response.Body.Close() }()
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {

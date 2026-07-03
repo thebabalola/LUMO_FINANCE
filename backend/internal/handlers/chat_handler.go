@@ -75,8 +75,9 @@ func (handler *ChatHandler) ChatStream(c *fiber.Ctx) error {
 			if err != nil {
 				return
 			}
-			fmt.Fprintf(streamWriter, "event: %s\ndata: %s\n\n", eventName, payloadJSON)
-			streamWriter.Flush()
+			// Write errors mean the client disconnected; nothing to do but stop emitting.
+			_, _ = fmt.Fprintf(streamWriter, "event: %s\ndata: %s\n\n", eventName, payloadJSON)
+			_ = streamWriter.Flush()
 		}
 		handler.chatService.HandleChatMessageStream(
 			context.Background(), userID, request.ConversationID, request.Message, requestInfo, emit)

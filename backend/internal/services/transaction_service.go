@@ -172,7 +172,7 @@ func (service *TransactionService) debitWalletAndRecordPending(ctx context.Conte
 	if err != nil {
 		return "", err
 	}
-	defer databaseTx.Rollback(ctx)
+	defer func() { _ = databaseTx.Rollback(ctx) }()
 
 	// Conditional debit: only succeeds when the balance covers the amount,
 	// so concurrent spends cannot overdraw the wallet.
@@ -209,7 +209,7 @@ func (service *TransactionService) refundWalletAndMarkFailed(ctx context.Context
 	if err != nil {
 		return err
 	}
-	defer databaseTx.Rollback(ctx)
+	defer func() { _ = databaseTx.Rollback(ctx) }()
 
 	if _, err := databaseTx.Exec(ctx,
 		`UPDATE wallets SET balance = balance + $1, updated_at = NOW() WHERE user_id = $2`,
