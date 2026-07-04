@@ -1,3 +1,13 @@
+<!-- 
+Lumo Finance Colour Scheme:
+1. Cream / Soft Blush ( #FCECDC )
+    • Role: Primary background in Light Mode, and primary text/icon color in Dark Mode.
+2. Ember Orange / Terracotta ( #EB6028 )
+    • Role: The brand's core accent color. Used consistently across both modes for primary buttons, call-to-actions, and active states.
+3. Deep Brown / Bordeaux ( #320A03 )
+    • Role: Primary background in Dark Mode, and primary text/anchor color in Light Mode. 
+-->
+
 # 🎨 Frontend & Product Experience Lead — Lumo Finance
 ### Nomba x DevCareer Hackathon | July 2026
 
@@ -113,7 +123,7 @@ LUMO_FINANCE/
 
 ---
 
-### A. Next.js Application Setup & Routing — 🟡 `PARTIAL (5/7 complete)`
+### A. Next.js Application Setup & Routing
 
 **What:** Establish the foundational app architecture — routing, layout, metadata, fonts, and global styles.
 
@@ -136,7 +146,7 @@ LUMO_FINANCE/
 
 ---
 
-### B. Authentication Pages — 🟡 `PARTIAL (2/8 complete)`
+### B. Authentication Pages
 
 **What:** Build the login and registration flows. First thing a judge sees after the landing page.
 
@@ -167,7 +177,7 @@ LUMO_FINANCE/
 
 ---
 
-### C. Dashboard — 🟡 `PARTIAL (3/5 complete)`
+### C. Dashboard
 
 **What:** The main product screen. Chat on one side, wallet + transactions on the other. This is the core experience judges will demo.
 
@@ -194,7 +204,7 @@ LUMO_FINANCE/
 
 ---
 
-### D. Chat Interface (Core UX) — 🟡 `PARTIAL (3/12 complete)` — ⚠️ CRITICAL GAP
+### D. Chat Interface (Core UX)
 
 **What:** The heart of Lumo. Every financial action flows here. Must feel fast, smart, and trustworthy. Judges will type into this live.
 
@@ -246,7 +256,7 @@ LUMO_FINANCE/
 
 ---
 
-### E. Transactions Page — ❌ `NOT STARTED (stub only)`
+### E. Transactions Page
 
 **What:** Full-page transaction history. Judges check here to see Nomba API data surfaced properly.
 
@@ -272,7 +282,7 @@ LUMO_FINANCE/
 
 ---
 
-### F. Settings Page — ❌ `NOT STARTED (stub only)`
+### F. Settings Page
 
 **What:** User profile and account management.
 
@@ -290,7 +300,7 @@ LUMO_FINANCE/
 
 ---
 
-### G. Responsive Design & Mobile Optimization — 🟡 `PARTIAL (3/6 complete)`
+### G. Responsive Design & Mobile Optimization
 
 **What:** Nigerian users are majority mobile. The app must work perfectly on phones.
 
@@ -307,7 +317,7 @@ LUMO_FINANCE/
 
 ---
 
-### H. Animations & Motion Design — 🟡 `PARTIAL (1/8 complete)`
+### H. Animations & Motion Design
 
 **What:** Motion makes Lumo feel alive and premium. Framer Motion is already in `package.json`.
 
@@ -330,7 +340,7 @@ LUMO_FINANCE/
 
 ---
 
-### I. Loading, Empty & Error States — ❌ `PARTIAL (1/6 complete) — spinner only`
+### I. Loading, Empty & Error States
 
 **What:** Every screen in all 7 states. This is what separates amateur from production-quality work.
 
@@ -358,7 +368,7 @@ LUMO_FINANCE/
 
 ---
 
-### J. Accessibility — ❌ `PARTIAL (2/9 complete)`
+### J. Accessibility
 
 **Engineering Playbook Minimum Checklist:**
 - [ ] All images have descriptive `alt` text
@@ -373,7 +383,7 @@ LUMO_FINANCE/
 
 ---
 
-### K. State Management — 🟡 `PARTIAL (1/4 complete)`
+### K. State Management
 
 **What:** Zustand for global state, TanStack Query for server state.
 
@@ -396,7 +406,7 @@ LUMO_FINANCE/
 
 ---
 
-### L. API Integration (Frontend Side) — 🟡 `PARTIAL (1/4 complete)` — ⚠️ Chat API is dead code
+### L. API Integration (Frontend Side)
 
 **What:** Wire your UI to the Next.js API routes (which proxy to the Cloudflare Worker).
 
@@ -420,7 +430,7 @@ LUMO_FINANCE/
 
 ---
 
-### M. Reusable Components Library — 🟡 `PARTIAL (4/16 complete)`
+### M. Reusable Components Library
 
 **What:** A clean, consistent component library the whole team can use.
 
@@ -461,7 +471,7 @@ app/components/
 
 ---
 
-### N. Forms & Validation — 🟡 `PARTIAL (2/5 complete)`
+### N. Forms & Validation
 
 **What:** All user input validated before submission. React Hook Form (already installed).
 
@@ -480,7 +490,7 @@ app/components/
 
 ---
 
-### O. Transaction Receipts & Confirmations — ❌ `NOT STARTED` — 🚨 HIGHEST PRIORITY FOR JUDGING
+### O. Transaction Receipts & Confirmations
 
 **What:** The fintech moment of truth. Must inspire total trust. This is where your Nomba integration score lives.
 
