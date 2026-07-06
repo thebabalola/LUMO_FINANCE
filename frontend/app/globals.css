@@ -10,6 +10,7 @@
     /* Light mode definitions */
     --color-brown: 252 236 220; /* FCECDC */
     --color-brown-light: 242 222 201;
+    --color-brown-deep: 246 226 206;
     --color-cream: 50 10 3; /* 320A03 */
     --color-ember: 235 96 40; /* EB6028 */
     --color-ember-hover: 208 84 35; /* d05423 */
@@ -21,6 +22,7 @@
     /* Dark mode definitions */
     --color-brown: 50 10 3;
     --color-brown-light: 66 17 7;
+    --color-brown-deep: 38 7 2;
     --color-cream: 252 236 220;
     --color-ember: 235 96 40;
     --color-ember-hover: 208 84 35;
@@ -45,6 +47,25 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
   }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-cream) / 0.15);
+    border-radius: 999px;
+    border: 3px solid rgb(var(--color-brown));
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-ember) / 0.5);
+  }
 }
 
 @layer components {
@@ -61,6 +82,80 @@
   .lumo-card {
     @apply glass-panel shadow-3d rounded-2xl;
     transform-style: preserve-3d;
+  }
+
+  /* Headline gradient: cream fading into ember */
+  .text-gradient-ember {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      100deg,
+      rgb(var(--color-cream)) 30%,
+      rgb(var(--color-ember)) 65%,
+      rgb(255 160 90) 90%
+    );
+  }
+
+  /* Solid ember-to-glow gradient for single accent words, where the
+     cream lead-in of text-gradient-ember would read as uncolored */
+  .text-gradient-ember-solid {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      100deg,
+      rgb(var(--color-ember)) 10%,
+      rgb(255 150 80) 90%
+    );
+  }
+
+  /* Faint blueprint grid used behind hero/CTA sections */
+  .bg-grid-faint {
+    background-image:
+      linear-gradient(rgb(var(--color-cream) / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--color-cream) / 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Film-grain overlay that stops glassy gradients from banding */
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Sheen that sweeps across the wallet card on hover */
+  .card-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-sheen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgb(255 255 255 / 0.08) 50%,
+      transparent 60%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.9s ease;
+  }
+
+  .card-sheen:hover::before {
+    transform: translateX(120%);
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -89,3 +184,16 @@
   animation: slideUp 0.3s ease-out;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

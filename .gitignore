@@ -38,3 +38,6 @@ frontend/.env.local
 backend/.env
 backend/api
 docker-compose.override.yml
+
+# TypeScript incremental build cache
+*.tsbuildinfo

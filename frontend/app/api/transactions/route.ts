@@ -1,61 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { backendAuthedFetch, backendErrorMessage } from '@/lib/server/backend'
+
+interface BackendTransaction {
+  id: string
+  type: string
+  amount: number
+  recipient: string
+  status: string
+  created_at: string
+  reference: string
+}
 
 export async function GET(request: NextRequest) {
   try {
-    const limit = request.nextUrl.searchParams.get('limit') || '10'
-    const skip = request.nextUrl.searchParams.get('skip') || '0'
+    const limit = request.nextUrl.searchParams.get('limit') || '20'
 
-    // In a real app, fetch from Nomba API via Worker
-    // For now, return mock data
-    const transactions = [
-      {
-        id: '1',
-        type: 'transfer',
-        amount: 50000,
-        recipient: 'David Okafor',
-        status: 'completed',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        id: '2',
-        type: 'airtime',
-        amount: 1000,
-        recipient: 'MTN Airtime',
-        status: 'completed',
-        timestamp: new Date(Date.now() - 7200000).toISOString(),
-      },
-      {
-        id: '3',
-        type: 'bill',
-        amount: 5000,
-        recipient: 'EKEDC',
-        status: 'completed',
-        timestamp: new Date(Date.now() - 86400000).toISOString(),
-      },
-      {
-        id: '4',
-        type: 'data',
-        amount: 500,
-        recipient: 'Glo Data',
-        status: 'pending',
-        timestamp: new Date(Date.now() - 172800000).toISOString(),
-      },
-      {
-        id: '5',
-        type: 'transfer',
-        amount: 25000,
-        recipient: 'Jane Doe',
-        status: 'completed',
-        timestamp: new Date(Date.now() - 259200000).toISOString(),
-      },
-    ]
+    const response = await backendAuthedFetch(`/transactions?limit=${encodeURIComponent(limit)}`)
+    if (!response.ok) {
+      const errorMessage = await backendErrorMessage(response, 'Failed to fetch transactions')
+      return NextResponse.json({ error: errorMessage }, { status: response.status })
+    }
 
-    return NextResponse.json(transactions.slice(parseInt(skip), parseInt(skip) + parseInt(limit)))
+    const body = await response.json()
+    const backendTransactions = (body.transactions ?? []) as BackendTransaction[]
+
+    const transactions = backendTransactions.map((transaction) => ({
+      id: transaction.id,
+      type: transaction.type,
+      // The backend stores amounts in kobo; the UI displays naira.
+      amount: transaction.amount / 100,
+      recipient: transaction.recipient,
+      status: transaction.status,
+      timestamp: transaction.created_at,
+      reference: transaction.reference,
+    }))
+
+    return NextResponse.json(transactions)
   } catch (error) {
     console.error('Transactions API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch transactions' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 })
   }
 }

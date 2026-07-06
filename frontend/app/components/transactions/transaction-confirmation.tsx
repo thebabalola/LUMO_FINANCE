@@ -16,21 +16,28 @@ export interface TransactionIntent {
 
 interface TransactionConfirmationCardProps {
   intent: TransactionIntent
-  onConfirm: () => Promise<void>
+  onConfirm: (transactionPin: string) => Promise<void>
   onCancel: () => void
 }
 
 export function TransactionConfirmationCard({ intent, onConfirm, onCancel }: TransactionConfirmationCardProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [transactionPin, setTransactionPin] = useState('')
+
+  const isPinValid = /^\d{4,6}$/.test(transactionPin)
 
   const handleConfirm = async () => {
+    if (!isPinValid) {
+      setError('Enter your 4-6 digit transaction PIN to confirm.')
+      return
+    }
     setIsProcessing(true)
     setError(null)
     try {
-      await onConfirm()
+      await onConfirm(transactionPin)
     } catch (err) {
-      setError('Transaction failed. Please try again.')
+      setError(err instanceof Error ? err.message : 'Transaction failed. Please try again.')
     } finally {
       setIsProcessing(false)
     }
@@ -45,7 +52,9 @@ export function TransactionConfirmationCard({ intent, onConfirm, onCancel }: Tra
           <div className="w-8 h-8 rounded-full bg-ember/20 flex items-center justify-center text-ember">
             <ArrowRight size={16} />
           </div>
-          <span className="font-heading font-medium">Send Money</span>
+          <span className="font-heading font-medium">
+            {{ transfer: 'Send Money', airtime: 'Buy Airtime', data: 'Buy Data', bills: 'Pay Bill' }[intent.type]}
+          </span>
         </div>
       </div>
       
@@ -73,6 +82,24 @@ export function TransactionConfirmationCard({ intent, onConfirm, onCancel }: Tra
           <span className="text-ember">{formatMoney(intent.total)}</span>
         </div>
 
+        <div className="pt-2">
+          <label htmlFor="transaction-pin" className="block text-xs text-cream/70 mb-1.5">
+            Transaction PIN
+          </label>
+          <input
+            id="transaction-pin"
+            type="password"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={6}
+            value={transactionPin}
+            onChange={(event) => setTransactionPin(event.target.value.replace(/\D/g, ''))}
+            disabled={isProcessing}
+            placeholder="••••"
+            className="w-full h-11 px-3 rounded-lg bg-white/5 border border-white/10 text-cream text-center text-lg tracking-[0.5em] font-mono focus:outline-none focus:ring-2 focus:ring-ember/50 disabled:opacity-50"
+          />
+        </div>
+
         {error && (
           <div className="mt-2 p-2 bg-red-500/10 border border-red-500/20 rounded-md text-xs text-red-400 text-center">
             {error}
@@ -89,9 +116,9 @@ export function TransactionConfirmationCard({ intent, onConfirm, onCancel }: Tra
           <X size={16} />
           Cancel
         </button>
-        <button 
+        <button
           onClick={handleConfirm}
-          disabled={isProcessing}
+          disabled={isProcessing || !isPinValid}
           className="flex-1 py-2 px-3 flex items-center justify-center gap-2 rounded-lg bg-success hover:bg-success/90 text-brown font-semibold text-sm transition-colors disabled:opacity-50"
         >
           {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
