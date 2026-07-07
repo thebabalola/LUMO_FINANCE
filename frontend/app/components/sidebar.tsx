@@ -2,14 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MessageSquare, LayoutList, Settings, LogOut, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { MessageSquare, LayoutList, Settings, LogOut, Menu, X, ChevronLeft, ChevronRight, PieChart, Users, CreditCard, SendHorizontal } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from './ui/theme-toggle'
 
 const navItems = [
   { name: 'Chat', href: '/dashboard', icon: MessageSquare },
-  { name: 'Transactions', href: '/transactions', icon: LayoutList },
+  { name: 'Analytics', href: '/analytics', icon: PieChart },
+  { name: 'Transfers', href: '/transactions', icon: SendHorizontal },
+  { name: 'Beneficiaries', href: '/beneficiaries', icon: Users },
+  { name: 'Cards', href: '/cards', icon: CreditCard },
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
@@ -77,9 +80,9 @@ export function Sidebar() {
       <div className={clsx("p-4 border-t border-white/5 flex flex-col gap-4", isCollapsed && !isMobile && "items-center")}>
         <div className={clsx("flex items-center gap-3", isCollapsed && !isMobile && "justify-center")}>
           <img 
-            src="/people_3d.png" 
+            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Babalola" 
             alt="Avatar" 
-            className="w-10 h-10 rounded-full bg-white/10 object-cover shrink-0 border border-white/10 shadow-lg shadow-black/20"
+            className="w-10 h-10 rounded-full bg-white/10 shrink-0"
           />
           {(!isCollapsed || isMobile) && (
             <div className="flex-1 overflow-hidden">

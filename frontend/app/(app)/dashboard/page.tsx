@@ -58,59 +58,10 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Spending Insights MVP */}
-        <motion.div
-          variants={cardVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-        >
-          <Card className="p-6 relative overflow-hidden">
-            <div className="flex justify-between items-center mb-6 relative z-10">
-              <h3 className="font-heading font-semibold text-cream">Spending Insights</h3>
-              <select className="bg-transparent text-sm text-cream/70 outline-none cursor-pointer">
-                <option className="bg-brown">This Month</option>
-                <option className="bg-brown">Last Month</option>
-              </select>
-            </div>
-            
-            <div className="space-y-5 relative z-10">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-cream">Transfers</span>
-                  <span className="font-medium text-cream">₦120,000</span>
-                </div>
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-ember rounded-full" style={{ width: '65%' }}></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-cream">Bills & Utilities</span>
-                  <span className="font-medium text-cream">₦45,000</span>
-                </div>
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#4285F4] rounded-full" style={{ width: '25%' }}></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-cream">Airtime & Data</span>
-                  <span className="font-medium text-cream">₦15,000</span>
-                </div>
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-success rounded-full" style={{ width: '10%' }}></div>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
       </div>
 
       {/* Chat Column (Left on Desktop, Bottom on Mobile) */}
-      <div className="w-full md:w-[60%] md:order-1 flex flex-col h-[600px] md:h-[calc(100vh-6rem)]">
+      <div className="w-full md:w-[60%] md:order-1 flex flex-col h-[600px] md:h-[calc(100vh-6rem)] relative">
         <ChatInterface />
       </div>
       
