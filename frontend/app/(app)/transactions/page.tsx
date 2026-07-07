@@ -1,109 +1,153 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { motion } from 'framer-motion'
+import { Send, Smartphone, Wifi, ReceiptText, ArrowDownLeft, RefreshCw } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Search, Filter, ArrowDownRight, ArrowUpRight, Clock, Download } from 'lucide-react'
-import { clsx } from 'clsx'
+import { formatCurrency, formatDate } from '@/lib/utils'
 
-const MOCK_TRANSACTIONS = [
-  { id: 'tx-1', title: 'Transfer to John Doe', amount: 10000, type: 'debit', status: 'success', date: '2026-07-03T14:30:00Z', reference: 'NMB-2026-847291' },
-  { id: 'tx-2', title: 'Salary Deposit', amount: 450000, type: 'credit', status: 'success', date: '2026-07-01T08:15:00Z', reference: 'NMB-2026-112349' },
-  { id: 'tx-3', title: 'Airtime Purchase', amount: 1000, type: 'debit', status: 'success', date: '2026-06-30T19:45:00Z', reference: 'NMB-2026-992831' },
-  { id: 'tx-4', title: 'Netflix Subscription', amount: 5000, type: 'debit', status: 'pending', date: '2026-06-29T10:00:00Z', reference: 'NMB-2026-556123' },
-  { id: 'tx-5', title: 'Transfer from Alice', amount: 25000, type: 'credit', status: 'success', date: '2026-06-28T16:20:00Z', reference: 'NMB-2026-881234' },
-]
+const easeOutExpo = [0.21, 0.47, 0.32, 0.98] as const
+
+interface TransactionListItem {
+  id: string
+  type: string
+  amount: number
+  recipient: string
+  status: string
+  timestamp: string
+  reference: string
+}
+
+const typeIcons: Record<string, typeof Send> = {
+  transfer: Send,
+  airtime: Smartphone,
+  data: Wifi,
+  bill: ReceiptText,
+  deposit: ArrowDownLeft,
+}
+
+const statusStyles: Record<string, string> = {
+  completed: 'text-success bg-success/10',
+  pending: 'text-yellow-400 bg-yellow-400/10',
+  failed: 'text-danger bg-danger/10',
+}
 
 export default function TransactionsPage() {
-  const [searchTerm, setSearchTerm] = useState('')
+  const [transactions, setTransactions] = useState<TransactionListItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
-  const filtered = MOCK_TRANSACTIONS.filter(tx => 
-    tx.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    tx.reference.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const fetchTransactions = useCallback(async () => {
+    setIsLoading(true)
+    setLoadError(null)
+    try {
+      const response = await fetch('/api/transactions?limit=50')
+      const data = await response.json()
+      if (!response.ok) {
+        setLoadError(data.error ?? 'Failed to load transactions')
+        return
+      }
+      setTransactions(data)
+    } catch {
+      setLoadError('Failed to load transactions. Please check your connection.')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [fetchTransactions])
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto w-full flex flex-col h-full">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-heading font-bold text-cream mb-2">Transactions</h1>
-          <p className="text-cream/70">View and manage your recent activity.</p>
-        </div>
-        <Button variant="outline" className="flex items-center gap-2 border-white/10 text-cream bg-white/5 hover:bg-white/10">
-          <Download size={16} />
-          Export Statement
-        </Button>
-      </div>
+    <div className="p-6 max-w-4xl mx-auto w-full">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: easeOutExpo }}
+        className="flex items-center justify-between mb-6"
+      >
+        <h1 className="text-2xl font-heading font-bold text-cream">Transactions</h1>
+        <button
+          onClick={fetchTransactions}
+          disabled={isLoading}
+          className="flex items-center gap-2 px-3 py-2 text-sm text-cream/70 hover:text-cream bg-white/5 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50"
+        >
+          <RefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
+          Refresh
+        </button>
+      </motion.div>
 
-      <Card className="p-4 mb-6 flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-3 text-cream/40" size={18} />
-          <Input 
-            placeholder="Search by name or reference..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 bg-black/20 border-white/10 text-cream w-full"
-          />
+      {isLoading ? (
+        <div className="space-y-3">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="h-16 bg-white/5 rounded-xl animate-pulse" />
+          ))}
         </div>
-        <Button variant="outline" className="flex items-center gap-2 border-white/10 text-cream hover:bg-white/5">
-          <Filter size={16} />
-          Filters
-        </Button>
-      </Card>
-
-      <div className="space-y-4">
-        {filtered.length > 0 ? (
-          filtered.map((tx) => (
-            <Card key={tx.id} className="p-4 hover:bg-white/5 transition-colors cursor-pointer group border-white/5">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className={clsx(
-                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
-                    tx.type === 'credit' ? "bg-success/10 text-success" : "bg-ember/10 text-ember"
-                  )}>
-                    {tx.type === 'credit' ? <ArrowDownRight size={24} /> : <ArrowUpRight size={24} />}
+      ) : loadError ? (
+        <Card className="p-8 text-center">
+          <p className="text-danger mb-4">{loadError}</p>
+          <button
+            onClick={fetchTransactions}
+            className="px-4 py-2 bg-ember hover:bg-ember-hover text-cream rounded-lg text-sm font-medium transition-colors"
+          >
+            Try Again
+          </button>
+        </Card>
+      ) : transactions.length === 0 ? (
+        <Card className="p-12 text-center">
+          <p className="text-cream/70 mb-2">No transactions yet</p>
+          <p className="text-sm text-cream/50">
+            Ask the Lumo assistant to send money, buy airtime, or pay a bill to get started.
+          </p>
+        </Card>
+      ) : (
+        <Card className="p-0 overflow-hidden divide-y divide-white/5">
+          {transactions.map((transaction, transactionIndex) => {
+            const TypeIcon = typeIcons[transaction.type] ?? Send
+            return (
+              <motion.div
+                key={transaction.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.5,
+                  delay: Math.min(transactionIndex * 0.05, 0.6),
+                  ease: easeOutExpo,
+                }}
+                className="flex items-center justify-between p-4 hover:bg-white/5 transition-colors group"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-ember/20 text-ember flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-ember group-hover:text-white transition-all duration-300">
+                    <TypeIcon size={18} />
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-cream text-lg">{tx.title}</h3>
-                    <div className="flex items-center gap-2 text-sm text-cream/50 mt-1">
-                      <span>{new Date(tx.date).toLocaleDateString()}</span>
-                      <span>•</span>
-                      <span>Ref: {tx.reference}</span>
-                    </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-cream truncate">
+                      {transaction.recipient || transaction.type}
+                    </p>
+                    <p className="text-xs text-cream/50">
+                      {formatDate(transaction.timestamp)}
+                      {transaction.reference && ` • ${transaction.reference}`}
+                    </p>
                   </div>
                 </div>
-                
-                <div className="text-right">
-                  <p className={clsx(
-                    "font-bold text-lg",
-                    tx.type === 'credit' ? "text-success" : "text-cream"
-                  )}>
-                    {tx.type === 'credit' ? '+' : '-'}₦{tx.amount.toLocaleString()}
+                <div className="text-right shrink-0 ml-4">
+                  <p className="text-sm font-semibold text-cream">
+                    {formatCurrency(transaction.amount)}
                   </p>
-                  <div className="flex items-center justify-end gap-1 mt-1">
-                    {tx.status === 'pending' && <Clock size={12} className="text-amber-500" />}
-                    <span className={clsx(
-                      "text-xs capitalize font-medium",
-                      tx.status === 'success' ? "text-success/70" : "text-amber-500/70"
-                    )}>
-                      {tx.status}
-                    </span>
-                  </div>
+                  <span
+                    className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${
+                      statusStyles[transaction.status] ?? 'text-cream/50 bg-white/5'
+                    }`}
+                  >
+                    {transaction.status}
+                  </span>
                 </div>
-              </div>
-            </Card>
-          ))
-        ) : (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 text-cream/20">
-              <Search size={32} />
-            </div>
-            <h3 className="text-lg font-semibold text-cream mb-2">No transactions found</h3>
-            <p className="text-cream/50">Try adjusting your search or filters.</p>
-          </div>
-        )}
-      </div>
+              </motion.div>
+            )
+          })}
+        </Card>
+      )}
     </div>
   )
 }

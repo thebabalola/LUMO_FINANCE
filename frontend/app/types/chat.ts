@@ -11,6 +11,10 @@ export interface Message {
   timestamp: Date
   intent?: TransactionIntent
   receipt?: TransactionReceipt
+  // Present when the assistant prepared a money-moving action that is
+  // waiting for the user's PIN confirmation. Holds the action_id needed
+  // by /api/chat/confirm and /api/chat/cancel.
+  pendingAction?: PendingAction
 }
 
 export interface ChatRequest {

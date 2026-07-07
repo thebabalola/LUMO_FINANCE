@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { MessageSquare, Settings, LogOut, Menu, X, ChevronLeft, ChevronRight, PieChart, Users, CreditCard, SendHorizontal } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { MessageSquare, LayoutList, Settings, LogOut, Menu, X } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from './ui/theme-toggle'
@@ -16,39 +17,57 @@ const navItems = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ]
 
+interface SidebarUserProfile {
+  name: string
+  email: string
+}
+
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [mounted, setMounted] = useState(false)
-  
+  const [userProfile, setUserProfile] = useState<SidebarUserProfile | null>(null)
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
   useEffect(() => {
     setMounted(true)
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch('/api/user')
+        if (response.ok) {
+          const profile = await response.json()
+          setUserProfile({ name: profile.name, email: profile.email })
+        }
+      } catch (error) {
+        console.error('Failed to fetch profile:', error)
+      }
+    }
+    fetchUserProfile()
   }, [])
 
-  const SidebarContent = ({ isMobile = false }) => (
-    <div className={clsx(
-      "flex flex-col h-full bg-brown shrink-0 border-r border-white/5 relative z-50 transition-all duration-300",
-      isCollapsed && !isMobile ? "w-[80px]" : "w-[240px]"
-    )}>
-      
-      {/* Collapse Toggle Button (Desktop only) */}
-      {!isMobile && (
-        <button 
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3.5 top-8 bg-brown border border-white/10 rounded-full p-1 text-cream/50 hover:text-cream hover:bg-white/5 transition-colors z-50"
-        >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
-      )}
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } finally {
+      router.push('/login')
+      router.refresh()
+    }
+  }
 
-      <div className={clsx("p-6 border-b border-white/5 flex items-center", isCollapsed && !isMobile ? "justify-center" : "justify-between")}>
-        <Link href="/dashboard" className={clsx("flex items-center gap-2", isCollapsed && !isMobile && "justify-center")}>
-          <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-8 h-8 object-contain shrink-0" />
-          {(!isCollapsed || isMobile) && <span className="font-heading text-xl text-cream font-bold">Lumo</span>}
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full bg-brown w-[240px] shrink-0 border-r border-white/5 relative z-50">
+      <div className="p-6 border-b border-white/5 flex items-center justify-between">
+        <Link href="/dashboard" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center shadow-lg shadow-ember/20 group-hover:shadow-ember-glow group-hover:scale-105 transition-all duration-300">
+            <span className="text-cream font-bold text-lg font-heading">L</span>
+          </div>
+          <span className="font-heading text-xl text-cream font-bold">Lumo</span>
         </Link>
-        {isMobile && mobileMenuOpen && (
-          <button className="md:hidden text-cream" onClick={() => setMobileMenuOpen(false)}>
+        {mobileMenuOpen && (
+          <button className="md:hidden text-cream" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
             <X size={24} />
           </button>
         )}
@@ -61,53 +80,53 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              title={isCollapsed && !isMobile ? item.name : undefined}
+              onClick={() => setMobileMenuOpen(false)}
               className={clsx(
-                'flex items-center gap-3 py-3 rounded-xl transition-all duration-200 font-medium',
-                isCollapsed && !isMobile ? 'justify-center px-0' : 'px-4',
-                isActive 
-                  ? 'bg-white/10 text-ember border-l-4 border-ember' 
-                  : 'text-cream/70 hover:bg-white/5 hover:text-cream border-l-4 border-transparent'
+                'relative flex items-center gap-3 px-4 py-3 rounded-xl transition-colors duration-200 font-medium overflow-hidden',
+                isActive
+                  ? 'text-ember'
+                  : 'text-cream/70 hover:bg-white/5 hover:text-cream'
               )}
             >
-              {mounted && <item.icon size={20} className={clsx("shrink-0", isActive ? 'text-ember' : 'text-cream/70')} />}
-              {(!isCollapsed || isMobile) && <span className="truncate">{item.name}</span>}
+              {isActive && (
+                <motion.span
+                  layoutId="sidebar-active-pill"
+                  transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+                  className="absolute inset-0 bg-white/10 rounded-xl border-l-4 border-ember"
+                />
+              )}
+              {mounted && (
+                <item.icon
+                  size={20}
+                  className={clsx('relative z-10', isActive ? 'text-ember' : 'text-cream/70')}
+                />
+              )}
+              <span className="relative z-10">{item.name}</span>
             </Link>
           )
         })}
       </nav>
 
-      <div className={clsx("p-4 border-t border-white/5 flex flex-col gap-4", isCollapsed && !isMobile && "items-center")}>
-        <div className={clsx("flex items-center gap-3", isCollapsed && !isMobile && "justify-center")}>
-          <img 
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Babalola" 
-            alt="Avatar" 
-            className="w-10 h-10 rounded-full bg-white/10 shrink-0"
-          />
-          {(!isCollapsed || isMobile) && (
-            <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-medium text-cream truncate">Babalola</p>
-              <p className="text-xs text-cream/50 truncate">t.babalolajoseph@gmail.com</p>
-            </div>
-          )}
+      <div className="p-4 border-t border-white/5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-ember/20 text-ember flex items-center justify-center font-heading font-bold">
+            {(userProfile?.name || 'L').charAt(0).toUpperCase()}
+          </div>
+          <div className="flex-1 overflow-hidden">
+            <p className="text-sm font-medium text-cream truncate">{userProfile?.name ?? 'Lumo User'}</p>
+            <p className="text-xs text-cream/50 truncate">{userProfile?.email ?? ''}</p>
+          </div>
         </div>
-        
-        {/* Toggle Pill under Avatar */}
-        {(!isCollapsed || isMobile) ? (
-          <ThemeToggle variant="pill" />
-        ) : (
-          <ThemeToggle variant="icon" />
-        )}
-        
-        <button 
-          title={isCollapsed && !isMobile ? "Sign Out" : undefined}
-          className={clsx(
-            "flex items-center gap-3 py-2 text-sm text-danger hover:bg-white/5 rounded-lg transition-colors",
-            isCollapsed && !isMobile ? "justify-center px-0 w-10 h-10" : "w-full px-4"
-          )}
+        <div className="flex gap-2 mb-4">
+          <ThemeToggle />
+        </div>
+        <button
+          onClick={handleSignOut}
+          disabled={isSigningOut}
+          className="flex w-full items-center gap-3 px-4 py-2 text-sm text-danger hover:bg-danger/10 rounded-lg transition-colors disabled:opacity-50"
         >
-          {mounted && <LogOut size={16} className="shrink-0" />}
-          {(!isCollapsed || isMobile) && <span>Sign Out</span>}
+          {mounted && <LogOut size={16} />}
+          {isSigningOut ? 'Signing Out…' : 'Sign Out'}
         </button>
       </div>
     </div>
@@ -116,14 +135,14 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Top Bar */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-brown border-b border-white/5 w-full shrink-0 sticky top-0 z-40">
+      <div className="md:hidden flex items-center justify-between p-4 bg-brown/90 backdrop-blur-md border-b border-white/5 w-full shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-2">
           <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-8 h-8 object-contain" />
           <span className="font-heading text-xl text-cream font-bold">Lumo</span>
         </div>
         <div className="flex items-center gap-3">
-          <ThemeToggle variant="icon" />
-          <button className="text-cream" onClick={() => setMobileMenuOpen(true)}>
+          <ThemeToggle />
+          <button className="text-cream" onClick={() => setMobileMenuOpen(true)} aria-label="Open menu">
             {mounted && <Menu size={24} />}
           </button>
         </div>
@@ -135,15 +154,29 @@ export function Sidebar() {
       </aside>
 
       {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <SidebarContent isMobile={true} />
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 z-50 flex">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: -260 }}
+              animate={{ x: 0 }}
+              exit={{ x: -260 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 320 }}
+              className="relative"
+            >
+              <SidebarContent />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

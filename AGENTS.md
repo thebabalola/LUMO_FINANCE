@@ -45,7 +45,7 @@ Redis (conversation memory, pending actions, OTP, refresh tokens, rate limits)
 | `POST /chat/stream` | SSE variant: `text_delta` / `tool_activity` / `pending_action` / `done` / `error` events |
 | `POST /chat/confirm` | Execute a pending action: `{action_id, pin}` (5 wrong PINs → 15-min lockout) |
 | `POST /chat/cancel` | Discard a pending action |
-| `POST /webhooks/nomba` | Transaction status updates (signature verification TODO) |
+| `POST /webhooks/nomba` | Transaction status updates (HMAC-SHA256 signature verified when `NOMBA_WEBHOOK_SECRET` is set; skipped when empty, e.g. sandbox/dev) |
 
 ### Backend Packages (`backend/internal/`)
 
@@ -75,36 +75,59 @@ Redis (conversation memory, pending actions, OTP, refresh tokens, rate limits)
 
 | File | Purpose |
 |------|---------|
-| `app/page.tsx` | Home page (redirects to /dashboard) |
-| `app/dashboard/page.tsx` | Main dashboard with chat + wallet |
-| `app/dashboard/layout.tsx` | Dashboard layout with sidebar |
+| `app/(public)/page.tsx` | Landing page |
+| `app/(public)/login/page.tsx` | Email+password login (calls `/api/auth/login`) |
+| `app/(public)/register/page.tsx` | Two-step registration: details → email OTP (calls `/api/auth/register`, `/api/auth/verify-otp`) |
+| `app/(app)/dashboard/page.tsx` | Main dashboard with chat + wallet |
+| `app/(app)/transactions/page.tsx` | Full transaction history list |
+| `app/(app)/settings/page.tsx` | Profile edit + transaction PIN setup |
+| `middleware.ts` | Redirects `(app)` routes to /login when the `auth-token` cookie is missing |
 
 ### Components
 
 | File | Purpose |
 |------|---------|
-| `components/chat/chat-interface.tsx` | Main chat container |
-| `components/chat/chat-messages.tsx` | Message display (user + assistant) |
+| `components/chat/chat-interface.tsx` | Main chat container; maps `pendingAction` responses into confirmation cards |
+| `components/chat/chat-messages.tsx` | Message display; drives PIN confirm/cancel of pending actions |
 | `components/chat/chat-input.tsx` | Input form with send button |
+| `components/transactions/transaction-confirmation.tsx` | Pending-action card with amount summary + PIN input |
+| `components/transactions/transaction-receipt.tsx` | Receipt card shown after a confirmed transaction |
 | `components/dashboard/wallet-overview.tsx` | Balance card with quick actions |
 | `components/dashboard/recent-transactions.tsx` | Transaction list |
-| `components/sidebar.tsx` | Navigation sidebar |
+| `components/sidebar.tsx` | Navigation sidebar with real profile + sign-out (framer-motion active pill + mobile drawer) |
+| `components/motion/reveal.tsx` | `Reveal`/`StaggerReveal` scroll-into-view animation wrappers |
+| `components/motion/parallax.tsx` | `Parallax` wrapper: scroll-linked vertical drift for layered depth |
+| `components/motion/animated-counter.tsx` | Spring count-up number that starts when scrolled into view |
+| `components/motion/tilt-card.tsx` | Cursor-tracking 3D tilt card with spotlight hover |
+| `components/auth/auth-brand-panel.tsx` | Shared animated branding column for login/register |
+| `components/auth/otp-input.tsx` | Six-box OTP input with paste support and per-digit animation |
 
 ### API Routes
 
+All routes proxy to the Go backend with the logged-in user's access token from
+httpOnly cookies (`auth-token` / `refresh-token`; expired access tokens are
+refreshed once and retried — see `lib/server/backend.ts`).
+`LUMO_DEV_BEARER_TOKEN` remains a dev-only fallback when no user is logged in.
+
 | Route | Purpose |
 |------|---------|
-| `api/chat/route.ts` | Forwards `{message, conversationId}` to the Go backend `/chat` with a dev bearer token |
-| `api/wallet/route.ts` | Returns account balance & info (mock — pending backend wiring) |
-| `api/transactions/route.ts` | Returns recent transactions (mock — pending backend wiring) |
+| `api/auth/{register,verify-otp,login,logout}/route.ts` | Auth proxy; verify-otp/login set the auth cookies, logout revokes and clears them |
+| `api/user/route.ts`, `api/user/pin/route.ts` | Profile get/update; set transaction PIN |
+| `api/chat/route.ts` | Forwards `{message, conversationId}` to the Go backend `/chat`; returns `pendingAction` when the AI prepared a payment |
+| `api/chat/confirm/route.ts` | Executes a pending action with `{actionId, pin}` |
+| `api/chat/cancel/route.ts` | Discards a pending action (tolerates already-expired ones) |
+| `api/wallet/route.ts` | Balance (kobo → naira) + default linked account + profile name |
+| `api/transactions/route.ts` | Transaction list (kobo → naira, `created_at` → `timestamp`) |
 
 ### State & Types
 
 | File | Purpose |
 |------|---------|
 | `store/chat-store.ts` | Zustand store for messages + loading state |
-| `types/chat.ts` | Message, ChatRequest, ChatResponse interfaces |
+| `types/chat.ts` | Message, ChatRequest, ChatResponse, PendingAction interfaces |
 | `lib/utils.ts` | formatCurrency, formatDate, formatTime helpers |
+| `lib/use-voice-input.ts` | Web Speech API hook for mic-to-text chat input (Chrome/Edge; typed wrapper) |
+| `lib/server/backend.ts` | Server-side backend client: auth cookies, refresh-and-retry, error mapping |
 
 ## Data Flow
 
@@ -122,7 +145,7 @@ Redis (conversation memory, pending actions, OTP, refresh tokens, rate limits)
 1. User says: "Send ₦10,000 to David"
 2. Claude verifies the recipient (verifyRecipient tool), then calls transferMoney — which only creates a pending action in Redis (5-min TTL)
 3. Claude summarizes the transfer and asks the user to confirm with their PIN
-4. Frontend calls `POST /api/v1/chat/confirm {action_id, pin}`
+4. The confirmation card collects the PIN and the frontend calls `POST /api/chat/confirm {actionId, pin}`, proxied to the backend's `/api/v1/chat/confirm`
 5. Backend verifies the PIN (bcrypt, lockout after 5 failures), debits the wallet atomically, executes via the Nomba client
 6. Receipt returned; outcome appended to conversation memory so Claude knows it completed
 
@@ -234,11 +257,11 @@ npm start           # Run production build locally
 
 ## Next Steps
 
-- [ ] Add voice input with Web Speech API
-- [ ] Add transaction confirmation modal
+- [x] Add voice input with Web Speech API (mic button in chat input; speech → text for review before send)
+- [x] Add transaction confirmation card (inline in chat, with PIN entry)
 - [ ] Add spending analytics page
 - [ ] Add transaction filters (date range, type)
-- [ ] Add user authentication
+- [x] Add user authentication
 - [ ] Add transaction notifications
 
 ## Cloudflare Worker

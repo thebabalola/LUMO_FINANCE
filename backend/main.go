@@ -144,7 +144,7 @@ func main() {
 	protected.Post("/chat/cancel", chatHandler.Cancel)
 
 	// Nomba webhook (for transaction updates)
-	app.Post("/webhooks/nomba", handlers.HandleNombaWebhook(dbPool, auditRecorder))
+	app.Post("/webhooks/nomba", handlers.HandleNombaWebhook(dbPool, auditRecorder, appConfig.NombaWebhookSecret))
 
 	log.Printf("🚀 Server running on port %s", appConfig.Port)
 	if err := app.Listen(fmt.Sprintf(":%s", appConfig.Port)); err != nil {
