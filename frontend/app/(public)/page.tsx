@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Card } from '@/components/ui/card'
 import { ArrowRight, ShieldCheck, Zap, Globe, MessageSquare } from 'lucide-react'
 
@@ -24,6 +25,7 @@ export default function LandingPage() {
           </nav>
           
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link href="/login" className="hidden md:block font-medium text-cream/80 hover:text-ember transition-colors">
               Sign In
             </Link>
