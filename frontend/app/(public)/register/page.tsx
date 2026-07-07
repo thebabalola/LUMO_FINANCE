@@ -43,9 +43,7 @@ export default function RegisterPage() {
         
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-2 mb-16 inline-flex">
-            <div className="w-10 h-10 rounded-xl bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
-              <span className="text-cream font-bold text-xl font-heading">L</span>
-            </div>
+            <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-10 h-10 object-contain" />
             <span className="font-heading text-2xl font-bold tracking-tight text-cream">Lumo</span>
           </Link>
 
@@ -73,9 +71,7 @@ export default function RegisterPage() {
         
         {/* Mobile Header */}
         <Link href="/" className="md:hidden flex items-center gap-2 mb-12 self-start">
-          <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
-            <span className="text-cream font-bold font-heading">L</span>
-          </div>
+          <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-8 h-8 object-contain" />
           <span className="font-heading text-xl font-bold text-cream">Lumo</span>
         </Link>
 

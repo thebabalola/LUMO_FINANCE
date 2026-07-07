@@ -4,11 +4,49 @@ import { ThemeProvider } from '@/components/providers/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Lumo Finance - AI Financial Assistant',
-  description: 'Manage your finances through natural conversation with Lumo Finance. Send money, pay bills, and track expenses via chat.',
+  metadataBase: new URL("https://lumofinance.vercel.app"),
+  title: {
+    template: "%s | Lumo Finance",
+    default: "Lumo Finance — AI-Powered Financial Assistant",
+  },
+  description:
+    "Manage your finances through natural conversation with Lumo Finance. Send money, pay bills, and track expenses effortlessly via an intelligent chat interface powered by Nomba.",
+  keywords: [
+    "Lumo Finance",
+    "AI banking",
+    "Nomba",
+    "fintech",
+    "conversational finance",
+    "payments",
+    "money transfer",
+    "financial assistant",
+  ],
+  authors: [{ name: "Lumo Finance Team" }],
+  creator: "Lumo Finance",
+  openGraph: {
+    type: "website",
+    title: "Lumo Finance — Conversational AI Banking",
+    description:
+      "Send money, buy airtime, and manage your wealth simply by chatting. Experience the future of finance.",
+    siteName: "Lumo Finance",
+    images: [
+      { url: "/lumoFi-logo.png", width: 1200, height: 630, alt: "Lumo Finance Logo" },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lumo Finance — Conversational AI Banking",
+    description:
+      "Send money, buy airtime, and manage your wealth simply by chatting. Experience the future of finance.",
+    images: ["/lumoFi-logo.png"],
+  },
   icons: {
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23EB6028"/><text x="50" y="70" font-family="sans-serif" font-size="60" font-weight="bold" fill="%23FCECDC" text-anchor="middle">L</text></svg>'
-  }
+    icon: "/lumoFi-logo.svg",
+    shortcut: "/lumoFi-logo.svg",
+    apple: "/lumoFi-logo.svg",
+  },
+  manifest: "/site.webmanifest",
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({

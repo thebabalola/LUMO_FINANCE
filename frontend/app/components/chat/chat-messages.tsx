@@ -2,7 +2,8 @@
 
 import { Message } from '@/types/chat'
 import { formatTime } from '@/lib/utils'
-import { Copy, Bot } from 'lucide-react'
+import { Copy, Bot, User } from 'lucide-react'
+import { clsx } from 'clsx'
 import { toast } from 'react-hot-toast'
 import { TransactionConfirmationCard, TransactionIntent } from '../transactions/transaction-confirmation'
 import { TransactionReceiptCard } from '../transactions/transaction-receipt'
@@ -69,11 +70,16 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
             >
               <div className={`flex gap-3 max-w-full md:max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 
-                {message.role === 'assistant' && (
-                  <div className="w-8 h-8 rounded-full bg-ember/20 text-ember flex items-center justify-center flex-shrink-0 mt-1">
-                    <Bot size={16} />
-                  </div>
-                )}
+                <div className={clsx(
+                  "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+                  message.role === 'user' ? "bg-white/10" : "bg-transparent"
+                )}>
+                  {message.role === 'user' ? (
+                    <User size={20} className="text-cream" />
+                  ) : (
+                    <img src="/lumoFi-logo.png" alt="Lumo AI" className="w-10 h-10 object-contain" />
+                  )}
+                </div>
                 
                 <div className="group relative">
                   <div

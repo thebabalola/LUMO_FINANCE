@@ -26,9 +26,7 @@ export function Sidebar() {
     <div className="flex flex-col h-full bg-brown w-[240px] shrink-0 border-r border-white/5 relative z-50">
       <div className="p-6 border-b border-white/5 flex items-center justify-between">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
-            <span className="text-cream font-bold text-lg font-heading">L</span>
-          </div>
+          <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-8 h-8 object-contain" />
           <span className="font-heading text-xl text-cream font-bold">Lumo</span>
         </Link>
         {mobileMenuOpen && (
@@ -87,9 +85,7 @@ export function Sidebar() {
       {/* Mobile Top Bar */}
       <div className="md:hidden flex items-center justify-between p-4 bg-brown border-b border-white/5 w-full shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-2">
-           <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
-            <span className="text-cream font-bold text-lg font-heading">L</span>
-          </div>
+          <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-8 h-8 object-contain" />
           <span className="font-heading text-xl text-cream font-bold">Lumo</span>
         </div>
         <div className="flex items-center gap-3">

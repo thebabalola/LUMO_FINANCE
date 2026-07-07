@@ -13,10 +13,8 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-brown/80 backdrop-blur-md border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
-              <span className="text-cream font-bold text-xl font-heading">L</span>
-            </div>
-            <span className="font-heading text-2xl font-bold tracking-tight">Lumo</span>
+            <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-10 h-10 object-contain" />
+            <span className="font-heading text-2xl text-cream font-bold">Lumo</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8 font-medium">
@@ -127,14 +125,12 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-brown-light py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-ember flex items-center justify-center">
-              <span className="text-cream font-bold text-sm font-heading">L</span>
-            </div>
-            <span className="font-heading text-xl font-bold">Lumo</span>
+            <img src="/lumoFi-logo.png" alt="Lumo Logo" className="w-6 h-6 object-contain grayscale opacity-70" />
+            <span className="font-heading text-lg text-cream/70 font-bold">Lumo</span>
           </div>
-          <p className="text-sm text-cream/50">© 2026 Lumo Finance. Built for Nomba Hackathon.</p>
+          <p className="text-cream/40 text-sm">© 2026 Lumo Finance. Built for Nomba Hackathon.</p>
           <div className="flex gap-4">
             <Link href="#" className="text-sm text-cream/50 hover:text-ember transition-colors">Privacy</Link>
             <Link href="#" className="text-sm text-cream/50 hover:text-ember transition-colors">Terms</Link>
