@@ -8,14 +8,14 @@ export function middleware(request: NextRequest) {
   // Protected routes (Zone 2)
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/transactions') || pathname.startsWith('/settings')) {
     if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      // COMMENTED OUT FOR DEV: return NextResponse.redirect(new URL('/login', request.url))
     }
   }
 
   // Auth routes (redirect to dashboard if logged in)
   if (pathname.startsWith('/login') || pathname.startsWith('/register')) {
     if (token) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      // COMMENTED OUT FOR DEV: return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 

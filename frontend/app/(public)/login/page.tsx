@@ -135,7 +135,13 @@ export default function LoginPage() {
                 <div className="relative bg-brown px-4 text-xs uppercase text-cream/40 font-medium">Or continue with</div>
               </div>
 
-              <Button variant="outline" className="w-full h-12 bg-white/5 border-white/10 text-cream hover:bg-white/10 hover:text-white flex items-center justify-center gap-3">
+              <Button 
+                variant="outline" 
+                type="button"
+                disabled
+                title="Coming Soon"
+                className="w-full h-12 bg-white/5 border-white/10 text-cream hover:bg-white/10 hover:text-white flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <svg viewBox="0 0 24 24" className="w-5 h-5" aria-hidden="true">
                   <path d="M12.0003 4.75C13.7703 4.75 15.3553 5.36 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86 8.87028 4.75 12.0003 4.75Z" fill="#EA4335"></path>
                   <path d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.1L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z" fill="#4285F4"></path>
