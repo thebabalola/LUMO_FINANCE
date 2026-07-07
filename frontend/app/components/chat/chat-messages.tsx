@@ -51,8 +51,8 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
     <div className="flex-1 overflow-y-auto p-6 flex flex-col justify-end space-y-4">
       {messages.length === 0 ? (
         <div className="text-center mb-8 h-full flex flex-col justify-center items-center">
-          <div className="w-16 h-16 rounded-2xl bg-ember/20 text-ember mx-auto flex items-center justify-center mb-4">
-            <span className="font-heading text-2xl font-bold">L</span>
+          <div className="w-16 h-16 rounded-2xl bg-black/20 mx-auto flex items-center justify-center mb-4 border border-white/5 shadow-xl shadow-ember/10">
+            <img src="/lumoFi-logo.png" alt="Lumo AI" className="w-12 h-12 object-contain" />
           </div>
           <h3 className="font-heading text-xl font-medium text-cream mb-2">How can I help you today?</h3>
           <p className="text-sm text-cream/70 max-w-md mx-auto">

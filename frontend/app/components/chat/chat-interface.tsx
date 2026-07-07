@@ -71,8 +71,8 @@ export default function ChatInterface() {
       {/* Header */}
       <div className="p-4 border-b border-white/5 bg-white/5 backdrop-blur-md z-10 flex items-center gap-3">
         <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
-            <span className="font-heading font-bold text-cream">AI</span>
+          <div className="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center shadow-lg shadow-ember/20 border border-white/5 overflow-hidden">
+            <img src="/lumoFi-logo.png" alt="Lumo AI" className="w-8 h-8 object-contain" />
           </div>
           <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-brown"></div>
         </div>
