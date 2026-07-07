@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Points at the Go backend's /api/v1 (conversation memory lives server-side
-// there, so no history is forwarded from the client anymore).
-const BACKEND_BASE_URL = process.env.NEXT_PUBLIC_WORKER_BASE_URL
-
-// TODO(frontend-auth workstream): replace this dev-only server env token
-// with the logged-in user's access token once frontend auth lands.
-const DEV_BEARER_TOKEN = process.env.LUMO_DEV_BEARER_TOKEN
+import { backendAuthedFetch, backendErrorMessage } from '@/lib/server/backend'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,12 +12,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const response = await fetch(`${BACKEND_BASE_URL}/chat`, {
+    const response = await backendAuthedFetch('/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(DEV_BEARER_TOKEN ? { Authorization: `Bearer ${DEV_BEARER_TOKEN}` } : {}),
-      },
       body: JSON.stringify({
         message,
         conversation_id: conversationId ?? undefined,
@@ -32,7 +21,8 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      throw new Error(`Backend responded with ${response.status}`)
+      const errorMessage = await backendErrorMessage(response, 'Failed to process message')
+      return NextResponse.json({ error: errorMessage }, { status: response.status })
     }
 
     const data = await response.json()

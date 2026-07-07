@@ -5,6 +5,29 @@ import ChatMessages from './chat-messages'
 import ChatInput from './chat-input'
 import { useChatStore } from '@/store/chat-store'
 import { Card } from '@/components/ui/card'
+import { PendingAction } from '@/types/chat'
+import { TransactionIntent } from '../transactions/transaction-confirmation'
+
+// Shapes a backend pending action into the fields the confirmation card
+// displays. Amounts arrive in kobo; the UI shows naira.
+function pendingActionToIntent(pendingAction: PendingAction): TransactionIntent {
+  const typeLabels: Record<PendingAction['type'], string> = {
+    transfer: 'Bank Transfer',
+    airtime: 'Airtime',
+    data: 'Mobile Data',
+    bill: 'Bill Payment',
+  }
+  const amountNaira = pendingAction.amount_kobo / 100
+  return {
+    type: pendingAction.type === 'bill' ? 'bills' : pendingAction.type,
+    recipientName: pendingAction.recipient_name || pendingAction.recipient,
+    bankOrProvider: typeLabels[pendingAction.type],
+    accountOrPhone: pendingAction.recipient,
+    amount: amountNaira,
+    fee: 0,
+    total: amountNaira,
+  }
+}
 
 export default function ChatInterface() {
   const { messages, addMessage, loading, setLoading, conversationId, setConversationId } = useChatStore()
@@ -51,13 +74,14 @@ export default function ChatInterface() {
         content: data.response,
         role: 'assistant',
         timestamp: new Date(),
-        intent: data.intent,
+        pendingAction: data.pendingAction ?? undefined,
+        intent: data.pendingAction ? pendingActionToIntent(data.pendingAction) : undefined,
       })
     } catch (error) {
       console.error('Chat error:', error)
       addMessage({
         id: (Date.now() + 1).toString(),
-        content: 'Sorry, I encountered an error communicating with Nomba APIs. Please try again.',
+        content: 'Sorry, I encountered an error processing your message. Please try again.',
         role: 'assistant',
         timestamp: new Date(),
       })
@@ -74,7 +98,7 @@ export default function ChatInterface() {
           <div className="w-10 h-10 rounded-full bg-ember flex items-center justify-center shadow-lg shadow-ember/20">
             <span className="font-heading font-bold text-cream">AI</span>
           </div>
-          <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-brown"></div>
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-brown animate-pulse-ring"></div>
         </div>
         <div>
           <h2 className="font-heading font-semibold text-cream">Lumo Assistant</h2>
