@@ -77,9 +77,9 @@ export function Sidebar() {
       <div className={clsx("p-4 border-t border-white/5 flex flex-col gap-4", isCollapsed && !isMobile && "items-center")}>
         <div className={clsx("flex items-center gap-3", isCollapsed && !isMobile && "justify-center")}>
           <img 
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Babalola" 
+            src="/people_3d.png" 
             alt="Avatar" 
-            className="w-10 h-10 rounded-full bg-white/10 shrink-0"
+            className="w-10 h-10 rounded-full bg-white/10 object-cover shrink-0 border border-white/10 shadow-lg shadow-black/20"
           />
           {(!isCollapsed || isMobile) && (
             <div className="flex-1 overflow-hidden">

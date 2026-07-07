@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Card } from '@/components/ui/card'
 import { ArrowRight, ShieldCheck, Zap, Globe, MessageSquare } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function LandingPage() {
   return (
@@ -40,33 +41,56 @@ export default function LandingPage() {
 
       <main className="flex-1 w-full">
         {/* Hero Section with Ember Gradient Glow */}
-        <section className="relative pt-32 pb-40 px-6 overflow-hidden flex flex-col items-center justify-center text-center">
+        <section className="relative pt-24 pb-32 px-6 overflow-hidden flex flex-col items-center justify-center text-center min-h-[80vh]">
           {/* Background Glow */}
-          <div className="absolute -bottom-[20%] left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[500px] bg-ember/30 blur-[120px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[800px] h-[500px] bg-ember/20 blur-[120px] rounded-full pointer-events-none" />
           
-          <div className="relative z-10 max-w-4xl mx-auto animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-ember mb-8">
-              <Zap size={16} /> <span>Powered by Nomba Infrastructure</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-heading font-bold mb-8 leading-tight tracking-tight">
-              Manage your money like you&apos;re <span className="text-ember">texting a friend.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-cream/70 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Lumo is an AI-powered financial assistant that lets you send money, pay bills, and track expenses through simple, natural conversations.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/register">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-xl shadow-ember/20 text-lg group">
-                  Open Free Account
-                  <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg hover:bg-white/10">
-                  See how it works
-                </Button>
-              </Link>
-            </div>
+          <div className="relative z-10 max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:text-left text-center">
+            
+            <motion.div 
+              className="flex-1 space-y-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-ember">
+                <Zap size={16} /> <span>Powered by Nomba Infrastructure</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight tracking-tight">
+                Manage your money like you&apos;re <span className="text-ember">texting a friend.</span>
+              </h1>
+              <p className="text-lg md:text-xl text-cream/70 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Lumo is an AI-powered financial assistant that lets you send money, pay bills, and track expenses through simple, natural conversations.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                <Link href="/register">
+                  <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-xl shadow-ember/20 text-lg group">
+                    Open Free Account
+                    <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg hover:bg-white/10">
+                    See how it works
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex-1 w-full max-w-lg relative"
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            >
+              <motion.img 
+                src="/hero_3d_official_logo.png" 
+                alt="Lumo 3D Finance Visualization" 
+                className="w-full h-auto drop-shadow-2xl"
+                animate={{ y: [0, -20, 0] }}
+                transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              />
+            </motion.div>
           </div>
         </section>
 
