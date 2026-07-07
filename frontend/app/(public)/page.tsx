@@ -50,8 +50,8 @@ export default function LandingPage() {
               alt="Lumo Background Image" 
               className="w-[600px] md:w-[800px] max-w-none object-contain"
               animate={{ 
-                scale: [1, 1.3],
-                opacity: [0.5, 0]
+                scale: [1, 1.2],
+                opacity: [0.7, 0.1]
               }}
               transition={{ 
                 repeat: Infinity, 
@@ -62,7 +62,7 @@ export default function LandingPage() {
           </div>
 
           {/* Glassmorphism/Blur Overlay so text stays extremely readable */}
-          <div className="absolute inset-0 bg-brown/70 backdrop-blur-md pointer-events-none z-0" />
+          <div className="absolute inset-0 bg-brown/40 backdrop-blur-sm pointer-events-none z-0" />
 
           {/* Background Glow */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[800px] h-[500px] bg-ember/20 blur-[120px] rounded-full pointer-events-none z-0" />
@@ -76,12 +76,7 @@ export default function LandingPage() {
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight tracking-tight max-w-3xl">
-                Manage your money like you&apos;re <span className="text-ember relative inline-block">
-                  texting a friend.
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-ember/40" viewBox="0 0 100 10" preserveAspectRatio="none">
-                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" />
-                  </svg>
-                </span>
+                Manage your money like you&apos;re <span className="text-ember">texting a friend.</span>
               </h1>
               <p className="text-lg md:text-xl text-cream/80 leading-relaxed max-w-2xl mx-auto font-medium">
                 Lumo is an AI-powered financial assistant that lets you send money, pay bills, and track expenses through simple, natural conversations.
