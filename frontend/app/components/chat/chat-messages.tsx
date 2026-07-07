@@ -59,12 +59,10 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
           className="text-center mb-8 h-full flex flex-col justify-center items-center relative z-10 w-full"
         >
           {/* Stunning 3D People Background Decoration */}
-          <motion.img 
+          <img 
             src="/people_3d.png" 
             alt="3D People" 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] w-[400px] max-w-full h-auto object-contain opacity-10 pointer-events-none mix-blend-screen"
-            animate={{ y: ['-60%', '-65%', '-60%'] }}
-            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full max-h-[500px] object-contain opacity-10 pointer-events-none mix-blend-screen"
           />
           
           <div className="w-16 h-16 rounded-2xl bg-black/20 mx-auto flex items-center justify-center mb-4 border border-white/5 shadow-xl shadow-ember/10 relative z-10">
