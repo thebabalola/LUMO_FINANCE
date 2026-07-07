@@ -62,7 +62,7 @@ export default function ChatMessages({ messages, loading }: ChatMessagesProps) {
           <img 
             src="/people_3d.png" 
             alt="3D People" 
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-auto h-full max-h-[500px] object-contain opacity-10 pointer-events-none mix-blend-screen"
+            className="absolute top-1/2 right-0 translate-x-[25%] -translate-y-1/2 w-auto min-h-[140%] object-contain opacity-10 pointer-events-none mix-blend-screen"
           />
           
           <div className="w-16 h-16 rounded-2xl bg-black/20 mx-auto flex items-center justify-center mb-4 border border-white/5 shadow-xl shadow-ember/10 relative z-10">

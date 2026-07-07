@@ -10,7 +10,7 @@ import { ThemeToggle } from './ui/theme-toggle'
 const navItems = [
   { name: 'Chat', href: '/dashboard', icon: MessageSquare },
   { name: 'Analytics', href: '/analytics', icon: PieChart },
-  { name: 'Transfers', href: '/transactions', icon: SendHorizontal },
+  { name: 'Transactions', href: '/transactions', icon: SendHorizontal },
   { name: 'Beneficiaries', href: '/beneficiaries', icon: Users },
   { name: 'Cards', href: '/cards', icon: CreditCard },
   { name: 'Settings', href: '/settings', icon: Settings },

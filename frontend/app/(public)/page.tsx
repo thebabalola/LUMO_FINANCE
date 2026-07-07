@@ -41,55 +41,64 @@ export default function LandingPage() {
 
       <main className="flex-1 w-full">
         {/* Hero Section with Ember Gradient Glow */}
-        <section className="relative pt-24 pb-32 px-6 overflow-hidden flex flex-col items-center justify-center text-center min-h-[80vh]">
-          {/* Background Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[800px] h-[500px] bg-ember/20 blur-[120px] rounded-full pointer-events-none" />
+        <section className="relative pt-32 pb-40 px-6 overflow-hidden flex flex-col items-center justify-center text-center min-h-[85vh]">
           
-          <div className="relative z-10 max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:text-left text-center">
+          {/* Background Image with Pulse/Fade Animation */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
+            <motion.img 
+              src="/hero_3d_official_logo.png" 
+              alt="Lumo Background Image" 
+              className="w-[600px] md:w-[800px] max-w-none object-contain"
+              animate={{ 
+                scale: [1, 1.3],
+                opacity: [0.5, 0]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 4, 
+                ease: "easeOut"
+              }}
+            />
+          </div>
+
+          {/* Glassmorphism/Blur Overlay so text stays extremely readable */}
+          <div className="absolute inset-0 bg-brown/70 backdrop-blur-md pointer-events-none z-0" />
+
+          {/* Background Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[800px] h-[500px] bg-ember/20 blur-[120px] rounded-full pointer-events-none z-0" />
+          
+          <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center gap-12 text-center">
             
             <motion.div 
-              className="flex-1 space-y-8"
+              className="flex-1 space-y-8 flex flex-col items-center"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-ember">
-                <Zap size={16} /> <span>Powered by Nomba Infrastructure</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight tracking-tight">
-                Manage your money like you&apos;re <span className="text-ember">texting a friend.</span>
+              <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight tracking-tight max-w-3xl">
+                Manage your money like you&apos;re <span className="text-ember relative inline-block">
+                  texting a friend.
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-ember/40" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" />
+                  </svg>
+                </span>
               </h1>
-              <p className="text-lg md:text-xl text-cream/70 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              <p className="text-lg md:text-xl text-cream/80 leading-relaxed max-w-2xl mx-auto font-medium">
                 Lumo is an AI-powered financial assistant that lets you send money, pay bills, and track expenses through simple, natural conversations.
               </p>
-              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full mt-4">
                 <Link href="/register">
-                  <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-xl shadow-ember/20 text-lg group">
+                  <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-2xl shadow-ember/30 text-lg group px-8 py-6 rounded-2xl">
                     Open Free Account
                     <ArrowRight size={20} className="ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
                 <Link href="/login">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg hover:bg-white/10">
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg hover:bg-white/10 backdrop-blur-md bg-white/5 border-white/20 px-8 py-6 rounded-2xl">
                     See how it works
                   </Button>
                 </Link>
               </div>
-            </motion.div>
-
-            <motion.div 
-              className="flex-1 w-full max-w-lg relative"
-              initial={{ opacity: 0, x: 50, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            >
-              <motion.img 
-                src="/hero_3d_official_logo.png" 
-                alt="Lumo 3D Finance Visualization" 
-                className="w-full h-auto drop-shadow-2xl"
-                animate={{ y: [0, -20, 0] }}
-                transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              />
             </motion.div>
           </div>
         </section>
