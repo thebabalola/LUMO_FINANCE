@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MessageSquare, LayoutList, Settings, LogOut, Menu, X, ChevronLeft, ChevronRight, PieChart, Users, CreditCard, SendHorizontal } from 'lucide-react'
+import { MessageSquare, Settings, LogOut, Menu, X, ChevronLeft, ChevronRight, PieChart, Users, CreditCard, SendHorizontal } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useState, useEffect } from 'react'
 import { ThemeToggle } from './ui/theme-toggle'
