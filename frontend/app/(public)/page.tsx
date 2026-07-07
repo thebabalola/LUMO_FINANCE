@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Card } from '@/components/ui/card'
-import { ArrowRight, ShieldCheck, Zap, Globe, MessageSquare } from 'lucide-react'
+import { ArrowRight, ShieldCheck, Globe, MessageSquare } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function LandingPage() {
